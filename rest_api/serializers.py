@@ -12,7 +12,6 @@ class PerformerSerializer(serializers.ModelSerializer):
     requests = serializers.StringRelatedField(many=True)
     # requests = RequestSerializer(many=True)
 
-    #requests = serializers.PrimaryKeyRelatedField(many=True, queryset=Requests.objects.all())
     class Meta:
         model = Performers
         fields = (
