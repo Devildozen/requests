@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    БД
+{% endblock title %}
+
+{% block content %}
+    <h4>Заявки</h4>
+    <table border="solid">
+        <tr>
+            <th>id  </th>
+            <th>Номер входящей</th>
+            <th>Номер исходящей</th>
+            <th>Текст</th>
+            <th>Дата подачи </th>
+            <th>Срок исполнения</th>
+            <th>Заявитель</th>
+            <th>Исполнитель</th>
+        </tr>
+        {% for request in Requests %}
+        <tr>
+            <td>{{ request.id }}</td>
+            <td>{{ request.in_number }}</td>
+            <td>{{ request.out_number }}</td>
+            <td>{{ request.text }}</td>
+            <td>{{ request.filling_date }}</td>
+            <td>{{ request.performance_date }}</td>
+            <td>{{ request.applicnat }}</td>
+            <td>{{ request.performer.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+    <h4>Справочник Исполнителей</h4>
+    <table border="solid">
+        <tr>
+            <th>id  </th>
+            <th>ФИО</th>
+        </tr>
+        {% for Performer in Performers %}
+        <tr>
+            <td>{{ Performer.id }}</td>
+            <td>{{ Performer.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+{#    <h4>История заявок</h4>#}
+{#    <table border="solid">#}
+{#        <tr>#}
+{#            <th>id  </th>#}
+{#            <th>Заявка</th>#}
+{#            <th>дата изменения</th>#}
+{#            <th>старый исполнитель</th>#}
+{#            <th>новый исполнитель</th>#}
+{#        </tr>#}
+{#        {% for request in RequestHistory %}#}
+{#        <tr>#}
+{#            <td>{{ request.id }}</td>#}
+{#            <td>{{ request.request_id }}</td>#}
+{#            <td>{{ request.change_date }}</td>#}
+{#            <td>{{ request.old_performer }}</td>#}
+{#            <td>{{ request.new_performer }}</td>#}
+{#        </tr>#}
+{#        {% endfor %}#}
+{#    </table>#}
+{% endblock content %}

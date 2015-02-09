@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Добавление Исполнителя
+{% endblock title %}
+
+{% block content %}
+    <form method="post" action="{% url 'add_performer' %}">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Сохранить">
+    </form>
+{% endblock content %}

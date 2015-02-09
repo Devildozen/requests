@@ -1,0 +1,12 @@
+
+.status_active{
+    background-color: #f5d733;
+}
+
+.status_complete{
+    background-color: lightgreen;
+}
+
+.status_overdue{
+    background-color: lightsalmon;
+}
