@@ -17,7 +17,7 @@ class Requests(models.Model):
     text = models.TextField(null=True, blank=True, verbose_name='Текст')
     filling_date = models.DateField(verbose_name='Дата подачи')
     performance_date = models.DateField(verbose_name='Дата окончания')
-    applicnat = models.CharField(max_length=100, verbose_name='Заявитель')
+    applicant = models.CharField(max_length=100, verbose_name='Заявитель')
     performer = models.ForeignKey('Performers', related_name='requests',  verbose_name='Исполнитель')
 
 

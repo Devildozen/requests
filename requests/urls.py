@@ -9,7 +9,7 @@ import rest_api.serializers
 rest_api_urls = patterns('',
     url(r'^performer_list/$', rest_api.views.performer_list, name='api_performer_list'),
     url(r'^performer_list/(?P<name>[0-9a-zA-Z%]+)/$', rest_api.views.PerformerDetail.as_view(), name='api_performer_detail'),
-    url(r'^performer_list/(?P<name>[0-9a-zA-Z%]+)/requests/$', rest_api.views.PerformerRequestList.as_view(), name='api_performer_requests'),
+    url(r'^performer_list/(?P<name>[0-9a-zA-Z%]+)/request/(?P<in_number>[0-9]+)/$', rest_api.views.PerformerRequestList.as_view(), name='api_performer_requests'),
     #url(r'^performer_list/(?P<name>[0-9a-zA-Z\u064B-\u0652\u06D4\u0670\u0674\u06D5-\u06ED_-]+)/', rest_api.views.performer_details, name='api_performer_detail'),
     #url(r'^performer_list/(?P<name>[0-9a-zA-Z\u064B-\u0652\u06D4\u0670\u0674\u06D5-\u06ED_-]+)/', rest_api.views.performer_details, name='api_performer_detail'),
 

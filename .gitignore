@@ -1,0 +1,6 @@
+*.py[co]
+*.bat
+__pycache__
+
+.idea/
+request_form/migrations/

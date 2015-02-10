@@ -4,12 +4,18 @@ from rest_framework import serializers
 # from rest_api.serializers import *
 from request_form.models import Performers, Requests
 
+class PerformerRequests(serializers.RelatedField):
+    def to_representation(self, value):
+        return ('http://127.0.0.1:8000/api/performer_list/%s/request/%d/' % (value.performer.name, value.in_number))
+
+
 class PerformerSerializer(serializers.ModelSerializer):
-    # requests = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='api_performer_requests', lookup_field='name')
+    requests = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='api_performer_requests', lookup_field='name')
     # requests = serializers.HyperlinkedIdentityField('requests', view_name='api_performer_requests', lookup_field='name')
     # requests = serializers.RelatedField(many=True, read_only=True)
     # requests = serializers.PrimaryKeyRelatedField(many=True, queryset= Requests.objects.all())
-    requests = serializers.StringRelatedField(many=True)
+    # requests = serializers.StringRelatedField(many=True)
+    requests = PerformerRequests(many=True, queryset=Requests.objects.all())
     # requests = RequestSerializer(many=True)
 
     class Meta:
@@ -37,7 +43,7 @@ class RequestSerializer(serializers.ModelSerializer):
     #     'filling_date',
     #     'performance_date',
     #     'text',
-    #     'applicnat',
+    #     'applicant',
     #     'performer',
     # ]
     #performer = PerformerSerializer()

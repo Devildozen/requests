@@ -24,7 +24,7 @@ class RequestCreateForm(MyModelForm):
             'text',
             'filling_date',
             'performance_date',
-            'applicnat',
+            'applicant',
             'performer',
         )
 
@@ -34,7 +34,7 @@ class RequestCreateForm(MyModelForm):
 
 
 
-class RequestEditForm (forms.ModelForm):
+class RequestEditForm (RequestCreateForm):
     class Meta:
         model = Requests
         fields = [
@@ -42,12 +42,12 @@ class RequestEditForm (forms.ModelForm):
             'text',
             'filling_date',
             'performance_date',
-            'applicnat',
+            'applicant',
             'performer',
             'out_number',
         ]
-    filling_date = forms.DateField(widget=SelectDateWidget)
-    performance_date = forms.DateField(widget=SelectDateWidget)
+    # filling_date = forms.DateField(widget=SelectDateWidget)
+    # performance_date = forms.DateField(widget=SelectDateWidget)
     # applicnat = forms.CharField(attrs={'class': 'form-control'})
 
 class LoginForm(forms.Form):
