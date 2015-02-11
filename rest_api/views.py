@@ -1,13 +1,21 @@
 #-*- coding:utf-8 -*-
-#from django.shortcuts import render
+
+#Изменить поле номера заявки
+#сделать свою авторизацию в рест
+#Поле даты сделать пустым или сегодняшнюю
+#посмотреть Изменение номера заявки
+
 #from django.core.urlresolvers import reverse
 #from django.views.generic import ListView, CreateView
 #from django.contrib.auth import authenticate, login, logout,
+from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth.models import User, Group
 
 #pip install restframework
 #pip install httpie
+
+
 
 
 from rest_framework import generics, status, permissions
@@ -27,6 +35,9 @@ from rest_api.serializers import *
     #    'groups': reverse('group-list', request=request),
     #})
 
+@api_view(['GET', 'POST'])
+def index(request):
+        return render(request, 'api_index.html')
 
 @api_view(['GET', 'POST'])
 def performer_list(request):
@@ -66,6 +77,7 @@ class PerformerDetail(APIView):
         self.get_objects(name).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class PerformersList(generics.ListCreateAPIView):
     queryset = Performers.objects.all()
     #model = Performers
@@ -73,6 +85,7 @@ class PerformersList(generics.ListCreateAPIView):
     permission_classes = [
         permissions.IsAuthenticated
     ]
+
 
 class RequestsList(generics.ListCreateAPIView):
     queryset = Requests.objects.all()
@@ -82,6 +95,7 @@ class RequestsList(generics.ListCreateAPIView):
         permissions.IsAuthenticated
     ]
 
+
 class RequestsDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Requests.objects.all()
     #model = Requests
@@ -90,6 +104,7 @@ class RequestsDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [
         permissions.IsAuthenticated
     ]
+
 
 class PerformerRequestList(generics.ListAPIView):
     serializer_class = Requests

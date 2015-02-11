@@ -13,8 +13,10 @@ class MyModelForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
+
 class PerformerAddForm(forms.Form):
     performer_name = forms.CharField(label='ФИО исполнителя', max_length=100)
+
 
 class RequestCreateForm(MyModelForm):
     class Meta:
@@ -32,8 +34,6 @@ class RequestCreateForm(MyModelForm):
     performance_date = forms.DateField(widget=SelectDateWidget)
 
 
-
-
 class RequestEditForm (RequestCreateForm):
     class Meta:
         model = Requests
@@ -49,6 +49,7 @@ class RequestEditForm (RequestCreateForm):
     # filling_date = forms.DateField(widget=SelectDateWidget)
     # performance_date = forms.DateField(widget=SelectDateWidget)
     # applicnat = forms.CharField(attrs={'class': 'form-control'})
+
 
 class LoginForm(forms.Form):
     username = forms.CharField(label='Логин:', max_length=100)

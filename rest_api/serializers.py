@@ -6,16 +6,17 @@ from request_form.models import Performers, Requests
 
 class PerformerRequests(serializers.RelatedField):
     def to_representation(self, value):
-        return ('http://127.0.0.1:8000/api/performer_list/%s/request/%d/' % (value.performer.name, value.in_number))
+        return ('http://127.0.0.1:8000/api/performer_list/%s/requests/' % value.performer.name)
+        # return ('http://127.0.0.1:8000/api/performer_list/%s/request/%d/' % (value.performer.name, value.in_number))
 
 
 class PerformerSerializer(serializers.ModelSerializer):
-    requests = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='api_performer_requests', lookup_field='name')
+    # requests = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='api_performer_requests', lookup_field='name')
     # requests = serializers.HyperlinkedIdentityField('requests', view_name='api_performer_requests', lookup_field='name')
     # requests = serializers.RelatedField(many=True, read_only=True)
     # requests = serializers.PrimaryKeyRelatedField(many=True, queryset= Requests.objects.all())
-    # requests = serializers.StringRelatedField(many=True)
-    requests = PerformerRequests(many=True, queryset=Requests.objects.all())
+    requests = serializers.StringRelatedField(many=True)
+    # requests = PerformerRequests(many=True, queryset=Requests.objects.all())
     # requests = RequestSerializer(many=True)
 
     class Meta:
@@ -30,12 +31,15 @@ class PerformerSerializer(serializers.ModelSerializer):
 class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Requests
+
     # performer = serializers.PrimaryKeyRelatedField(
-    # # performer = serializers.HyperlinkedRelatedField(
+    # performer = serializers.StringRelatedField(
+    # performer = serializers.SlugRelatedField(
     # #     many = True,
-    # #     read_only= True,
+    #     read_only = True,
+    #     slug_field = 'name'
     # #     view_name='api_performer_detail',
-    #     queryset=Performers.objects.all()
+    # #     queryset=Performers.objects.all()
     # )
     # fields = [
     #     'in_number',
@@ -46,7 +50,8 @@ class RequestSerializer(serializers.ModelSerializer):
     #     'applicant',
     #     'performer',
     # ]
-    #performer = PerformerSerializer()
+    performer = PerformerSerializer()
+    # performer = serixalizers.Field
     #performer = PerformerSerializer(required=False)
 
     #def get_validation_exclusions(self):

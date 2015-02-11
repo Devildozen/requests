@@ -1,0 +1,103 @@
+{% load staticfiles %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html ng-app="myApp">
+<head>
+
+{#    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>#}
+{#    <script src="{% static '/static/js/index.js' %}"></script>#}
+
+    <link rel="stylesheet" type="text/css" href="{% static "/static/css/bootstrap.css" %}">
+{#    <link href="{% static '/static/css/bootstrap-responsive.css' %}" rel="stylesheet">#}
+    <link rel="stylesheet" type="text/css" href="{% static "/static/css/index.css" %}">
+
+    <script src="http://code.angularjs.org/1.1.4/angular.min.js"></script>
+    <script src="http://code.angularjs.org/1.1.4/angular-sanitize.min.js"></script>
+{#    <script src="http://code.angularjs.org/1.1.4/angular-resource.js"></script>#}
+
+    <script>
+        var app = angular.module('myApp', [])
+
+{#        app.factory('Performers', function($resource){})#}
+
+{#        var Performers = $resource("/api/performer_list/:name", { name: '@name'});#}
+{#        var Performers = $resource("{% url 'api_performer_list' %}/:name", { name: '@name'});#}
+{#        var performer = Performers.get({name: 'zzz'}, function(){})#}
+        app.controller('RequestsCtrl', function ($scope, $http, requestFactory) {
+            $scope.performers = []
+{#            $scope.performers = Performers.query()#}
+
+{#            $http.get('/api/performer_list/', data).success(function(data, status, headers, config) {#}
+            $http.get('{% url 'api_request_list' %}').success(function(data, status, headers, config) {
+                $scope.requests = data.results;
+            });
+            $http.get('{% url 'api_performer_list' %}').success(function(data, status, headers, config) {
+                $scope.performers = data;
+            });
+
+            $scope.edit = function(request){
+                alert(request.in_number)
+                $scope.req = request
+            }
+            requestFactory.request = $scope.req
+
+        })
+        app.controller('RequestFormCtrl', function($scope, $http, requestFactory){
+            $scope.save = function(data, form) {
+                if (form.$valid) {
+                    alert(data);
+                }
+            }
+            alert(requestFactory)
+{#            $scope.request = '123'//requestFactory.request;#}
+        })
+
+        app.factory('requestFactory', function(){
+            return {
+                request: 'test factory'
+            };
+        })
+
+    </script>
+</head>
+<body>
+
+<div class="container-fluid navbar bg-info">
+{% block header %}
+    <div class="navbar-inner ">
+        <ul class="nav navbar-nav ">
+            <li class=""><a href="{% url 'requests' %}">Заявки</a></li>
+            <li class=""><a href="{% url 'request_form' %}">Создать завку</a></li>
+            <li class=""><a href="{% url 'logout' %}" >Выйти</a></li>
+        </ul>
+    </div>
+{% endblock header %}
+</div>
+
+    {% include 'api_request_table.html' %}
+    {% include 'api_request_form.html' %}
+
+
+{#        <ul>#}
+{#            <li ng-repeat="performer in performers">{{ performer.id }} : {{ performer.name }}#}
+{#                <ul>#}
+{#                    Requests:#}
+{#                    <li ng-repeat="request in performer.requests">{{ request }}</li>#}
+{#                </ul>#}
+{#            </li>#}
+{#        </ul>#}
+
+</body>
+</html>
+
+
+{#            arr-addr <input ng-model="addr"><br/>#}
+{#            arr [addr] <input ng-model="arr[addr]"><br/>#}
+{#            arr : <span ng-bind="arr"></span><br/>#}
+{#            arr : <span >{{ arr }}</span><br/>#}
+{#            arr : <span ng-non-bindable>{{ arr }}</span><br/>#}
+{#            <span ng-bind-template="arr : {{ arr }}"></span><br/>#}
+{#            <span ng-bind-template="arr length : {{ arr.length }}"></span><br/>#}
+{#            <ul>#}
+{#                <li ng-repeat="num in arr">{{ $index+1}} : {{ num }}</li>#}
+{#            </ul>#}

@@ -7,18 +7,19 @@ import rest_api.views
 import rest_api.serializers
 
 rest_api_urls = patterns('',
+    url(r'^index/$', rest_api.views.index, name='api_index'),
     url(r'^performer_list/$', rest_api.views.performer_list, name='api_performer_list'),
     url(r'^performer_list/(?P<name>[0-9a-zA-Z%]+)/$', rest_api.views.PerformerDetail.as_view(), name='api_performer_detail'),
-    url(r'^performer_list/(?P<name>[0-9a-zA-Z%]+)/request/(?P<in_number>[0-9]+)/$', rest_api.views.PerformerRequestList.as_view(), name='api_performer_requests'),
+    url(r'^performer_list/(?P<name>[0-9a-zA-Z%]+)/requests/$', rest_api.views.PerformerRequestList.as_view(), name='api_performer_requests'),
+    # url(r'^performer_list/(?P<name>[0-9a-zA-Z%]+)/request/(?P<in_number>[0-9]+)/$', rest_api.views.PerformerRequestList.as_view(), name='api_performer_requests'),
     #url(r'^performer_list/(?P<name>[0-9a-zA-Z\u064B-\u0652\u06D4\u0670\u0674\u06D5-\u06ED_-]+)/', rest_api.views.performer_details, name='api_performer_detail'),
     #url(r'^performer_list/(?P<name>[0-9a-zA-Z\u064B-\u0652\u06D4\u0670\u0674\u06D5-\u06ED_-]+)/', rest_api.views.performer_details, name='api_performer_detail'),
 
     url(r'^performers/$', rest_api.views.PerformersList.as_view(), name='api_performers'),
     # url(r'^performers/add/', rest_api.views.PerformerAdd.as_view(), name='api_performers_add'),
-    url(r'^request_list/$', rest_api.views.RequestsList.as_view(), name='api_requests'),
-    url(r'^request_list/(?P<in_number>[0-9]+)', rest_api.views.RequestsDetail.as_view(), name='api_requests_detail'),
+    url(r'^request_list/$', rest_api.views.RequestsList.as_view(), name='api_request_list'),
+    url(r'^request_list/(?P<in_number>[0-9]+)/$', rest_api.views.RequestsDetail.as_view(), name='api_request_List_detail'),
     #url(r'^requests/add/', rest_api.views.RequestAdd.as_view(), name='api_requests_add'),
-
 
 )
 

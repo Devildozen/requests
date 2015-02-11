@@ -1,0 +1,43 @@
+{% verbatim %}
+    <div ng-controller="RequestFormCtrl">
+        {{ request }}
+        <form class="form-group form-inline row" name="RequestForm">
+
+            <div class="form-group col-md-4">
+                <lable for="applicant">Заявитель:</lable>
+                <input ng-model="request.applicant" class="form-control" id="applicant" maxlength="100" type="text" placeholder="Заявитель" />
+            </div>
+
+            <div class="form-group col-md-4 col-md-offset-4">
+                <lable for="in_number">№ входящий:</lable>
+                <input ng-model="request.in_number" class="form-control" id="in_number" type="number" placeholder="Входящий номер заявки" />
+            </div>
+
+            <div class="form-group col-md-4 col-md-offset-8">
+                <lable for="filling_date">Дата подачи:</lable>
+                <input ng-model="request.filling_date" class="form-control" id="filling_date" ng-pattern="/\d\d-\d\d-\d\d\d\d/"  placeholder="дд-мм-гггг" />
+            </div>
+
+            <div class="form-group col-md-12">
+                <div>
+                    <lable for="text">Текст:</lable>
+                </div>
+                <textarea ng-model="request.text" class="form-control" id="text" ></textarea>
+            </div>
+
+            <div class="form-group col-md-4">
+                <lable for="performer">Исполнитель:</lable>
+                <select class="form-control" id="performer">
+                    <option ng-repeat="performer in performers" value="{{ performer.id }}" >{{ performer.name }}<option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-4 col-md-offset-4">
+                <lable for="performance_date">Срок исполнения:</lable>
+                <input ng-model="request.performance_date" class="form-control" id="performance_date" ng-pattern="/\d\d-\d\d-\d\d\d\d/"  placeholder="дд-мм-гггг" />
+            </div>
+
+            <input ng-click="save(request, RequestForm)" class="btn btn-sm btn-success active col-md-1 col-md-offset-10" type="submit" value="Сохранить"  />
+        </form>
+    </div>
+{% endverbatim %}

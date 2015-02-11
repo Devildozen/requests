@@ -11,6 +11,7 @@ class Performers(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
+
 class Requests(models.Model):
     in_number = models.IntegerField(unique=True, verbose_name='Входящий номер')
     out_number = models.IntegerField(unique=True, null=True, blank=True, verbose_name='Исходящий номер')
@@ -19,7 +20,6 @@ class Requests(models.Model):
     performance_date = models.DateField(verbose_name='Дата окончания')
     applicant = models.CharField(max_length=100, verbose_name='Заявитель')
     performer = models.ForeignKey('Performers', related_name='requests',  verbose_name='Исполнитель')
-
 
     class Meta:
         db_table = 'requests'

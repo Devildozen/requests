@@ -71,6 +71,8 @@ def request_form(request):
         if type == 'edit':
             template_context['edit'] = True
             req_num = request.POST['in_number']
+            #Запретить редактирование номера входящей в форме.
+            #Или посылать еще поле с ИД для изменения по нему
             req = Requests.objects.get(in_number=req_num)
             form = RequestEditForm(request.POST, instance=req)
         else:

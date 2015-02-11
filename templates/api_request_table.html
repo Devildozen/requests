@@ -1,0 +1,29 @@
+{% verbatim %}
+   <div ng-controller="RequestsCtrl">
+        <table class="table table-bordered table-responsive table-condensed">
+            <tr>
+                <th>Номер входящей</th>
+                <th>Номер исходящей</th>
+                <th>Текст</th>
+                <th>Дата подачи </th>
+                <th>Срок исполнения</th>
+                <th>Заявитель</th>
+                <th>Исполнитель</th>
+                <th>Редактировать</th>
+            </tr>
+            <tr ng-repeat="request in requests" class="request">
+                <td>{{ request.in_number }}</td>
+                <td>{{ request.out_number}}</td>
+                <td>{{ request.text }}</td>
+                <td>{{ request.filling_date|date:"dd-mm-yyyy" }}</td>
+                <td>{{ request.performance_date|date:"dd-mm-yyyy" }}</td>
+                <td>{{ request.applicant }}</td>
+                <td>{{ request.performer.name }}</td>
+                <td>
+                    <button ng-click="edit(request)">Редактировать</button>
+                    <!--a href="{% url 'request_form' %}?type=edit&in_num={{ request.in_number }}">Редактировать</a-->
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endverbatim %}
