@@ -1,12 +1,16 @@
-#-*- coding:utf-8 -*-
-from django import forms
-from django.forms import widgets
-from request_form.models import *
-from django.forms.extras.widgets import SelectDateWidget
+# -*- coding:utf-8 -*-
 import datetime
+
+from django import forms
+# from django.forms import widgets
+from django.forms.extras.widgets import SelectDateWidget
+
+from request_form.models import *
+
 
 class MyModelForm(forms.ModelForm):
     error_css_class = 'text-danger'
+
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)
         # adding css classes to widgets without define the fields:
@@ -30,7 +34,8 @@ class RequestCreateForm(MyModelForm):
             'performer',
         )
 
-    filling_date = forms.DateField(widget=SelectDateWidget, initial=datetime.datetime.now)
+    filling_date = forms.DateField(widget=SelectDateWidget,
+                                   initial=datetime.datetime.now)
     performance_date = forms.DateField(widget=SelectDateWidget)
 
 
@@ -53,6 +58,5 @@ class RequestEditForm (RequestCreateForm):
 
 class LoginForm(forms.Form):
     username = forms.CharField(label='Логин:', max_length=100)
-    password = forms.CharField( widget = forms.PasswordInput, label = "Пароль:" )
-
-
+    password = forms.CharField(widget=forms.PasswordInput,
+                               label="Пароль:" )

@@ -1,14 +1,15 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
+# from datetime import *
+
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.views.generic import ListView, CreateView
+# from django.views.generic import ListView, CreateView
 from django.contrib.auth import authenticate, login, logout
-
-from datetime import *
 
 from request_form.forms import *
 from request_form.models import Requests, Performers
+
 
 def my_login(request):
     if request.user.is_authenticated():
@@ -33,11 +34,13 @@ def my_login(request):
     template_context['form'] = form
     return render(request, 'login.html',  template_context)
 
+
 def my_logout(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse('login'))
     logout(request)
     return HttpResponseRedirect(reverse('login'))
+
 
 def requests(request):
     if not request.user.is_authenticated():
@@ -45,6 +48,7 @@ def requests(request):
     template_context = {}
     template_context['Requests'] = Requests.objects.all()
     return render(request, 'requests.html',  template_context)
+
 
 def request_form(request):
     if not request.user.is_authenticated():
@@ -54,12 +58,12 @@ def request_form(request):
     template_context['edit'] = False
     if request.method != 'POST':
         try:
-            type = request.GET['type']
+            request_type = request.GET['type']
         except Exception:
             # выдаем форму создания
             form = RequestCreateForm()
         else:
-            if type == 'edit':
+            if request_type == 'edit':
                 template_context['edit'] = True
                 req_num = request.GET['in_num']
                 req = Requests.objects.get(in_number=req_num)
@@ -67,12 +71,12 @@ def request_form(request):
             else:
                 form = RequestCreateForm()
     else:
-        type = request.POST['form_type']
-        if type == 'edit':
+        request_type = request.POST['form_type']
+        if request_type == 'edit':
             template_context['edit'] = True
             req_num = request.POST['in_number']
-            #Запретить редактирование номера входящей в форме.
-            #Или посылать еще поле с ИД для изменения по нему
+            # Запретить редактирование номера входящей в форме.
+            # Или посылать еще поле с ИД для изменения по нему
             req = Requests.objects.get(in_number=req_num)
             form = RequestEditForm(request.POST, instance=req)
         else:
@@ -92,4 +96,3 @@ def show_db(request):
     template_context['Performers'] = Performers.objects.all()
     # template_context['RequestHistory'] = RequestHistory.objects.all()
     return render(request, 'db.html',  template_context)
-

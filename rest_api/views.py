@@ -1,43 +1,39 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
-#Изменить поле номера заявки
-#сделать свою авторизацию в рест
-#Поле даты сделать пустым или сегодняшнюю
-#посмотреть Изменение номера заявки
+# Изменить поле номера заявки
+# сделать свою авторизацию в рест
+# Поле даты сделать пустым или сегодняшнюю
+# посмотреть Изменение номера заявки
 
-#from django.core.urlresolvers import reverse
-#from django.views.generic import ListView, CreateView
-#from django.contrib.auth import authenticate, login, logout,
+# from django.core.urlresolvers import reverse
+# from django.views.generic import ListView, CreateView
+# from django.contrib.auth import authenticate, login, logout,
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.contrib.auth.models import User, Group
-
-#pip install restframework
-#pip install httpie
-
-
-
+from django.http import Http404
+# from django.contrib.auth.models import User, Group
 
 from rest_framework import generics, status, permissions
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from rest_framework.reverse import reverse
+# from rest_framework.reverse import reverse
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+# from rest_framework.permissions import IsAuthenticated
 
-from request_form.models import *
+# from request_form.models import *
 from rest_api.serializers import *
 
-#@api_view(['GET'])
-#def api(request, format=None):
-    #return Response({
-    #    'users': reverse('user-list', request=request),
-    #    'groups': reverse('group-list', request=request),
-    #})
+# @api_view(['GET'])
+# def api(request, format=None):
+#     return Response({
+#        'users': reverse('user-list', request=request),
+#        'groups': reverse('group-list', request=request),
+#     })
+
 
 @api_view(['GET', 'POST'])
 def index(request):
         return render(request, 'api_index.html')
+
 
 @api_view(['GET', 'POST'])
 def performer_list(request):
@@ -55,7 +51,7 @@ def performer_list(request):
 
 
 class PerformerDetail(APIView):
-#def performer_details(request, name):
+
     def get_objects(self, name):
         try:
             return Performers.objects.get(name=name)
@@ -67,7 +63,8 @@ class PerformerDetail(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, name):
-        serializer = PerformerSerializer(self.get_objects(name), data=request.data)
+        serializer = PerformerSerializer(self.get_objects(name),
+                                         data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -80,7 +77,7 @@ class PerformerDetail(APIView):
 
 class PerformersList(generics.ListCreateAPIView):
     queryset = Performers.objects.all()
-    #model = Performers
+    # model = Performers
     serializer_class = PerformerSerializer
     permission_classes = [
         permissions.IsAuthenticated
@@ -89,7 +86,7 @@ class PerformersList(generics.ListCreateAPIView):
 
 class RequestsList(generics.ListCreateAPIView):
     queryset = Requests.objects.all()
-    #model = Requests
+    # model = Requests
     serializer_class = RequestSerializer
     permission_classes = [
         permissions.IsAuthenticated
@@ -98,7 +95,7 @@ class RequestsList(generics.ListCreateAPIView):
 
 class RequestsDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Requests.objects.all()
-    #model = Requests
+    # model = Requests
     lookup_field = 'in_number'
     serializer_class = RequestSerializer
     permission_classes = [
@@ -109,7 +106,7 @@ class RequestsDetail(generics.RetrieveUpdateDestroyAPIView):
 class PerformerRequestList(generics.ListAPIView):
     serializer_class = Requests
     model = Requests
+
     def get_queryset(self):
         queryset = super(PerformerRequestList, self).get_queryset()
-        return queryset.filter(performer = self.kwargs.get('name'))
-
+        return queryset.filter(performer=self.kwargs.get('name'))
