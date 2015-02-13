@@ -20,7 +20,11 @@
                 <td>{{ request.applicant }}</td>
                 <td>{{ request.performer.name }}</td>
                 <td>
-                    <button ng-click="edit(request)">Редактировать</button>
+                    <!--
+                    <a ng-click="edit(request)" href="#/requests/form">Редактировать</a>
+                    <a ng-click="edit(request)" href="#/requests/form/{{ request.in_number }}">Редактировать</a>
+                    -->
+                    <a href="#/requests/form/{{ request.in_number }}">Редактировать</a>
                     <!--a href="{% url 'request_form' %}?type=edit&in_num={{ request.in_number }}">Редактировать</a-->
                 </td>
             </tr>

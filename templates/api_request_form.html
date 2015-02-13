@@ -1,8 +1,16 @@
 {% verbatim %}
     <div ng-controller="RequestFormCtrl">
-        {{ request }}
+<!--
+        {{ request }}<br/>
+        {{ request.in_number }}<br/>
+        {{ request.out_number}}<br/>
+        {{ request.text }}<br/>
+        {{ request.filling_date|date:"dd-mm-yyyy" }}<br/>
+        {{ request.performance_date|date:"dd-mm-yyyy" }}<br/>
+        {{ request.applicant }}<br/>
+        {{ request.performer.name }}<br/>
+-->
         <form class="form-group form-inline row" name="RequestForm">
-
             <div class="form-group col-md-4">
                 <lable for="applicant">Заявитель:</lable>
                 <input ng-model="request.applicant" class="form-control" id="applicant" maxlength="100" type="text" placeholder="Заявитель" />
@@ -15,7 +23,7 @@
 
             <div class="form-group col-md-4 col-md-offset-8">
                 <lable for="filling_date">Дата подачи:</lable>
-                <input ng-model="request.filling_date" class="form-control" id="filling_date" ng-pattern="/\d\d-\d\d-\d\d\d\d/"  placeholder="дд-мм-гггг" />
+                <input ng-model="request.filling_date" class="form-control" id="filling_date" placeholder="дд-мм-гггг" />
             </div>
 
             <div class="form-group col-md-12">
@@ -26,15 +34,15 @@
             </div>
 
             <div class="form-group col-md-4">
+                {{ request.performer}}<br/>
+                {{ performers[4] }}<br/>
                 <lable for="performer">Исполнитель:</lable>
-                <select class="form-control" id="performer">
-                    <option ng-repeat="performer in performers" value="{{ performer.id }}" >{{ performer.name }}<option>
-                </select>
+                <select ng-model="myPerformer" ng-options="performer.name for performer in performers" class="form-control" id="performer">{{ performer.name }}</select>
             </div>
 
             <div class="form-group col-md-4 col-md-offset-4">
                 <lable for="performance_date">Срок исполнения:</lable>
-                <input ng-model="request.performance_date" class="form-control" id="performance_date" ng-pattern="/\d\d-\d\d-\d\d\d\d/"  placeholder="дд-мм-гггг" />
+                <input ng-model="request.performance_date" class="form-control" id="performance_date"  placeholder="дд-мм-гггг" />
             </div>
 
             <input ng-click="save(request, RequestForm)" class="btn btn-sm btn-success active col-md-1 col-md-offset-10" type="submit" value="Сохранить"  />

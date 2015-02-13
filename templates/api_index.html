@@ -16,7 +16,27 @@
 {#    <script src="http://code.angularjs.org/1.1.4/angular-resource.js"></script>#}
 
     <script>
+
         var app = angular.module('myApp', [])
+
+        app.config(function($routeProvider){
+            $routeProvider
+                .when('/requests', {
+                    templateUrl: 'RequestTable',
+                    controller: 'RequestsCtrl'
+                })
+                .when('/requests/form', {
+                    templateUrl: 'RequestForm',
+                    controller: 'RequestFormCtrl'
+                })
+                .when('/requests/form/:in_num', {
+                    templateUrl: 'RequestForm',
+                    controller: 'RequestFormCtrl'
+                })
+                .otherwise({
+                    redirectTo: '/requests'
+                })
+        });
 
 {#        app.factory('Performers', function($resource){})#}
 
@@ -24,7 +44,7 @@
 {#        var Performers = $resource("{% url 'api_performer_list' %}/:name", { name: '@name'});#}
 {#        var performer = Performers.get({name: 'zzz'}, function(){})#}
         app.controller('RequestsCtrl', function ($scope, $http, requestFactory) {
-            $scope.performers = []
+            $scope.performers = [];
 {#            $scope.performers = Performers.query()#}
 
 {#            $http.get('/api/performer_list/', data).success(function(data, status, headers, config) {#}
@@ -36,21 +56,43 @@
             });
 
             $scope.edit = function(request){
-                alert(request.in_number)
-                $scope.req = request
+                requestFactory.request = request;
             }
-            requestFactory.request = $scope.req
 
-        })
-        app.controller('RequestFormCtrl', function($scope, $http, requestFactory){
+        });
+        app.controller('RequestFormCtrl', function($scope, $http, $routeParams, requestFactory){
+            $http.get('{% url 'api_performer_list' %}')
+                .success(function(data, status, headers, config) {
+                    $scope.performers = data;
+                    $scope.myPerformer = getPerformer($scope.request.performer.name, $scope.performers);
+                }
+            );
+
             $scope.save = function(data, form) {
                 if (form.$valid) {
-                    alert(data);
+                }
+            };
+            var getPerformer = function(name, performers){
+                for (var i=0; i < performers.length; i++){
+                    if (performers[i].name == name){
+                        return performers[i];
+                    }
                 }
             }
-            alert(requestFactory)
-{#            $scope.request = '123'//requestFactory.request;#}
-        })
+{#            $scope.request = requestFactory.request;#}
+            var in_num = $routeParams["in_num"]
+            if(in_num!=='undefined'){
+{#                $http({method:'GET', url:'{% url 'api_request_list' %}'+ in_num +'/' ).#}
+                $http.get('{% url 'api_request_list' %}'+ in_num +'/')
+                    .success(function(data) {
+                        $scope.request = data;
+{#                        $scope.request.performer = getPerformer($scope.request.performer.name, $scope.performers);#}
+
+                    }
+                );
+            }
+
+        });
 
         app.factory('requestFactory', function(){
             return {
@@ -62,42 +104,26 @@
 </head>
 <body>
 
-<div class="container-fluid navbar bg-info">
-{% block header %}
-    <div class="navbar-inner ">
-        <ul class="nav navbar-nav ">
-            <li class=""><a href="{% url 'requests' %}">Заявки</a></li>
-            <li class=""><a href="{% url 'request_form' %}">Создать завку</a></li>
-            <li class=""><a href="{% url 'logout' %}" >Выйти</a></li>
-        </ul>
+    <div class="container-fluid navbar bg-info">
+        <div class="navbar-inner ">
+            <ul class="nav navbar-nav ">
+                <li class=""><a href="#/requests">Заявки</a></li>
+                <li class=""><a href="#/requests/form">Создать завку</a></li>
+                <li class=""><a href="#/logout" >Выйти</a></li>
+            </ul>
+        </div>
     </div>
-{% endblock header %}
-</div>
-
-    {% include 'api_request_table.html' %}
-    {% include 'api_request_form.html' %}
 
 
-{#        <ul>#}
-{#            <li ng-repeat="performer in performers">{{ performer.id }} : {{ performer.name }}#}
-{#                <ul>#}
-{#                    Requests:#}
-{#                    <li ng-repeat="request in performer.requests">{{ request }}</li>#}
-{#                </ul>#}
-{#            </li>#}
-{#        </ul>#}
+    <ng-view></ng-view>
+
+    <script type="text/ng-template" id="RequestTable">
+        {% include 'api_request_table.html' %}
+    </script>
+
+    <script type="text/ng-template" id="RequestForm">
+        {% include 'api_request_form.html' %}
+    </script>
 
 </body>
 </html>
-
-
-{#            arr-addr <input ng-model="addr"><br/>#}
-{#            arr [addr] <input ng-model="arr[addr]"><br/>#}
-{#            arr : <span ng-bind="arr"></span><br/>#}
-{#            arr : <span >{{ arr }}</span><br/>#}
-{#            arr : <span ng-non-bindable>{{ arr }}</span><br/>#}
-{#            <span ng-bind-template="arr : {{ arr }}"></span><br/>#}
-{#            <span ng-bind-template="arr length : {{ arr.length }}"></span><br/>#}
-{#            <ul>#}
-{#                <li ng-repeat="num in arr">{{ $index+1}} : {{ num }}</li>#}
-{#            </ul>#}

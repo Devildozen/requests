@@ -4,6 +4,9 @@
         <script src="http://code.angularjs.org/1.1.4/angular.min.js"></script>
         <script src="http://code.angularjs.org/1.1.4/angular-sanitize.min.js"></script>
         <script>
+
+
+
         var app = angular.module('myApp', [])
         app.controller('Ctrl1', function($scope, testFactory) {
             //`$scope.name = 'angular';
@@ -13,17 +16,34 @@
                 $scope.num = num
             }
 
-            $scope.someText = testFactory
+            $scope.someText = testFactory.get();
+
+            $scope.change = function(){
+                testFactory.set($scope.someText);
+                //alert(testFactory.get());
+                //$scope.someText = testFactory.get()
+            }
+
         })
         app.controller('Ctrl2', function($scope, testFactory) {
 
-            $scope.someText = testFactory.testText
+            //$scope.someText = testFactory.text
+            //$scope.someText = testFactory.get();
 
         })
 
         app.factory('testFactory', function(){
+            text = 'Hello World'
             return {
-                testText : 'Hello World'
+                set : function(value){
+                    text=value;
+                    alert('set value :' + text)
+                },
+                get : function(){
+                    alert('get value :' + text)
+                    return text
+                },
+                text : text
             }
         })
 
@@ -46,8 +66,8 @@
             <span ng-bind-template="arr : {{ arr }}"></span><br/>
             <span ng-bind-template="arr length : {{ arr.length }}"></span><br/>
             <ul>
-                <li ng-repeat="num in arr">{{ $index+1}} : {{ num }}
-                    <button ng-click="click(num)">{{ $index+1}}</button>
+                <li ng-repeat="num in arr">{{ $index+1 }} : {{ num }}
+                    <button ng-click="click(num)">{{ $index+1 }}</button>
                 </li>
             </ul>
 
@@ -61,7 +81,7 @@
             <p ng-if="visible.status">second block 2</p>
 
             <hr/>
-            Ctrl1 <input ng-model="someText.testText"><br/>
+            Ctrl1 <input ng-model="someText" ng-change="change()"><br/>
         </div>
         <div ng-controller="Ctrl2">
             Ctrl2 <input ng-model="someText">
