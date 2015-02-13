@@ -14,12 +14,14 @@ class Performers(models.Model):
 
 
 class Requests(models.Model):
-    in_number = models.IntegerField(unique=True,
-                                    verbose_name='Входящий номер')
-    out_number = models.IntegerField(unique=True,
-                                     null=True,
-                                     blank=True,
-                                     verbose_name='Исходящий номер')
+    in_number = models.CharField(max_length=20,
+                                 unique=True,
+                                 verbose_name='Входящий номер')
+    out_number = models.CharField(max_length=20,
+                                  unique=True,
+                                  null=True,
+                                  blank=True,
+                                  verbose_name='Исходящий номер')
     text = models.TextField(null=True,
                             blank=True,
                             verbose_name='Текст')

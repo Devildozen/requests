@@ -19,9 +19,9 @@ class PerformerSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
-            'requests',
+            # 'requests',
         )
-    requests = serializers.StringRelatedField(many=True)
+    # requests = serializers.StringRelatedField(many=True, read_only=True)
     # requests = serializers.HyperlinkedRelatedField(
     #     many=True,
     #     read_only=True,
@@ -64,10 +64,11 @@ class RequestSerializer(serializers.ModelSerializer):
     #     'applicant',
     #     'performer',
     # ]
-    performer = PerformerSerializer()
+    # performer = PerformerSerializer()
     # performer = serializers.Field
     # performer = PerformerSerializer(required=False)
 
     # def get_validation_exclusions(self):
     #   exclusions = super(RequestSerializer, self).get_validation_exclusions()
     #   return exclusions + ['performer']
+

@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 # Изменить поле номера заявки
-# сделать свою авторизацию в рест
+# Узнат как отлавливать неавторизованного юзера
 # Поле даты сделать пустым или сегодняшнюю
 # посмотреть Изменение номера заявки
 
@@ -10,6 +10,7 @@
 # from django.contrib.auth import authenticate, login, logout,
 from django.shortcuts import render
 from django.http import Http404
+from django.conf import settings
 # from django.contrib.auth.models import User, Group
 
 from rest_framework import generics, status, permissions
@@ -18,6 +19,7 @@ from rest_framework.views import APIView
 # from rest_framework.reverse import reverse
 from rest_framework.response import Response
 # from rest_framework.permissions import IsAuthenticated
+
 
 # from request_form.models import *
 from rest_api.serializers import *
@@ -96,7 +98,8 @@ class RequestsList(generics.ListCreateAPIView):
 class RequestsDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Requests.objects.all()
     # model = Requests
-    lookup_field = 'in_number'
+    # lookup_field = 'in_number'
+    lookup_field = 'id'
     serializer_class = RequestSerializer
     permission_classes = [
         permissions.IsAuthenticated
