@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
-
-# Изменить поле номера заявки
-# Узнат как отлавливать неавторизованного юзера
+# ? Спросить - валидация на сервере а ошибки генерирует рест, какое сообщение выводить юзеру.
+# Узнать как отлавливать неавторизованного юзера
 # Поле даты сделать пустым или сегодняшнюю
 # посмотреть Изменение номера заявки
 
@@ -54,26 +53,26 @@ def performer_list(request):
 
 class PerformerDetail(APIView):
 
-    def get_objects(self, name):
+    def get_objects(self, id):
         try:
-            return Performers.objects.get(name=name)
+            return Performers.objects.get(pk=id)
         except Performers.DoesNotExist:
             raise Http404
 
-    def get(self, request, name):
-        serializer = PerformerSerializer(self.get_objects(name))
+    def get(self, request, id):
+        serializer = PerformerSerializer(self.get_objects(id))
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request, name):
-        serializer = PerformerSerializer(self.get_objects(name),
+    def put(self, request, id):
+        serializer = PerformerSerializer(self.get_objects(id),
                                          data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, name):
-        self.get_objects(name).delete()
+    def delete(self, request, id):
+        self.get_objects(id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -86,13 +85,36 @@ class PerformersList(generics.ListCreateAPIView):
     ]
 
 
+#class RequestsList(generics.ListAPIView):
+#    queryset = Requests.objects.all()
+#    # model = Requests
+#    serializer_class = RequestGetSerializer
+#    permission_classes = [
+#        permissions.IsAuthenticated
+#    ]
+#
+#class RequestCreate(generics.CreateAPIView):
+#    queryset = Requests.objects.all()
+#    # model = Requests
+#    serializer_class = RequestSerializer
+#    permission_classes = [
+#        permissions.IsAuthenticated
+#    ]
+
 class RequestsList(generics.ListCreateAPIView):
     queryset = Requests.objects.all()
-    # model = Requests
-    serializer_class = RequestSerializer
     permission_classes = [
         permissions.IsAuthenticated
     ]
+    serializer_class = RequestGetSerializer
+
+    def get(self, request, *args, **kwargs):
+        self.serializer_class = RequestGetSerializer
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.serializer_class = RequestSerializer
+        return self.create(request, *args, **kwargs)
 
 
 class RequestsDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -112,4 +134,4 @@ class PerformerRequestList(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = super(PerformerRequestList, self).get_queryset()
-        return queryset.filter(performer=self.kwargs.get('name'))
+        return queryset.filter(performer=self.kwargs.get('id'))

@@ -1,5 +1,5 @@
 {% verbatim %}
-    <div ng-controller="RequestFormCtrl">
+    <div ng-controller="RequestFormCtrl" class="container center-block">
 <!--
         {{ request }}<br/>
         {{ request.in_number }}<br/>
@@ -20,21 +20,22 @@
                 <li> data : {{ error.data }} </li>
                         <li ng-repeat="conf in error.config">{{ $index }} : {{ value }}</li>
                 </li>
+        <form class="form-group form-inline row" name="RequestForm">
                     </ul-->
             </ul>
         </div>
-        <form class="form-group form-inline row" name="RequestForm">
-            <div class="form-group col-md-4">
+        <form class="form-group row" name="RequestForm">
+            <div class="form-group col-md-2">
                 <lable for="applicant">Заявитель:</lable>
                 <input ng-model="request.applicant" class="form-control" id="applicant" maxlength="100" type="text" required placeholder="Заявитель" />
             </div>
 
-            <div class="form-group col-md-4 col-md-offset-4">
+            <div class="form-group col-md-2 col-md-offset-8">
                 <lable for="in_number">№ входящий:</lable>
                 <input ng-model="request.in_number" class="form-control" id="in_number" ng-pattern="/\d+/" required placeholder="Входящий номер заявки" />
             </div>
 
-            <div class="form-group col-md-4 col-md-offset-8">
+            <div class="form-group col-md-2 col-md-offset-10">
                 <lable for="filling_date">Дата подачи:</lable>
                 <input ng-model="request.filling_date" class="form-control" id="filling_date" type="date" required  />
             </div>
@@ -43,10 +44,10 @@
                 <div>
                     <lable for="text">Текст:</lable>
                 </div>
-                <textarea ng-model="request.text" class="form-control" id="text" ></textarea>
+                <textarea ng-model="request.text" class="form-control " id="text" ></textarea>
             </div>
 
-            <div ng-init="getPerformerList()" class="form-group col-md-4">
+            <div ng-init="getPerformerList()" class="form-group col-md-2">
                 <!--
                 {{ request.performer}}<br/>
                 {{ performers[4] }}<br/>
@@ -55,18 +56,17 @@
                 <select ng-model="request.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
             </div>
 
-            <div class="form-group col-md-4 col-md-offset-4">
+            <div class="form-group col-md-2 col-md-offset-8">
                 <lable for="performance_date">Срок исполнения:</lable>
                 <input ng-model="request.performance_date" class="form-control" id="performance_date" type="date" required />
             </div>
 
-            <div ng-if="request.id" class="form-group col-md-4 col-md-offset-8">
+            <div ng-if="request.id" class="form-group col-md-2 col-md-offset-10">
                 <lable for="out_number">№ исходящий:</lable>
                 <input ng-model="request.out_number" class="form-control" id="out_number" ng-pattern="/\d+/" placeholder="Номер исходящий" />
             </div>
 
-
-            <input ng-click="saveRequest(request, RequestForm)" class="btn btn-sm btn-success active col-md-1 col-md-offset-10" type="submit" value="Сохранить"  />
+            <input ng-click="saveRequest(request, RequestForm)" class="btn btn-sm btn-success active col-md-1 col-md-offset-1" type="submit" value="Сохранить"  />
         </form>
     </div>
 {% endverbatim %}

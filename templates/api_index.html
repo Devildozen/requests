@@ -6,7 +6,7 @@
 
 {#    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>#}
 {#    <script src="{% static '/static/js/index.js' %}"></script>#}
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{% static "/static/css/bootstrap.css" %}">
 {#    <link href="{% static '/static/css/bootstrap-responsive.css' %}" rel="stylesheet">#}
     <link rel="stylesheet" type="text/css" href="{% static "/static/css/index.css" %}">
@@ -32,64 +32,116 @@
             $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
             $http.defaults.headers.put['X-CSRFToken'] = $cookies.csrftoken;
         }]);
+
+        app.factory('requestFactory', function(){
+            return {
+                requestId: null,
+                request: null
+            };
+        })
+
+        app.factory('pages', function(){
+            return {
+                requestList : 'requestTable',
+                requestDetail : 'requestForm',
+                performers : 'performerForm'
+            }
+        })
+
 {#        app.config($locationProvider.html5Mode(true));#}
 {#        app.config(['$locationProvider', function($locationProvider) {#}
 {#                $locationProvider.html5Mode(true);#}
 {#            }#}
 {#        ]);#}
-        app.config(function($routeProvider){
-            $routeProvider
-                .when('/requests', {
-                    templateUrl: 'RequestTable',
-                    controller: 'RequestsCtrl'
-                })
-                .when('/requests/form', {
-                    templateUrl: 'RequestForm',
-                    controller: 'RequestFormCtrl'
-                })
-                .when('/requests/form/:id', {
-                    templateUrl: 'RequestForm',
-                    controller: 'RequestFormCtrl'
-                })
-                .when('/performers/form', {
-                    templateUrl: 'PerformerForm',
-                    controller: 'PerformerCtrl'
-                })
-                .otherwise({
-                    redirectTo: '/requests'
-                })
+{#        app.config(function($routeProvider){#}
+{#            $routeProvider#}
+{#                .when('/requests', {#}
+{#                    templateUrl: 'RequestTable',#}
+{#                    controller: 'RequestsCtrl'#}
+{#                })#}
+{#                .when('/requests/form', {#}
+{#                    templateUrl: 'RequestForm',#}
+{#                    controller: 'RequestFormCtrl'#}
+{#                })#}
+{#                .when('/requests/form/:id', {#}
+{#                    templateUrl: 'RequestForm',#}
+{#                    controller: 'RequestFormCtrl'#}
+{#                })#}
+{#                .when('/performers/form', {#}
+{#                    templateUrl: 'PerformerForm',#}
+{#                    controller: 'PerformerCtrl'#}
+{#                })#}
+{#                .otherwise({#}
+{#                    redirectTo: '/requests'#}
+{#                })#}
+{#        });#}
+
+
+        app.controller('BodyCtrl', function ($scope, $http, requestFactory, pages) {
+            $scope.virtualPage = pages.requestList;
+
+            $scope.redirect = function(page){
+                $scope.virtualPage = page;
+            }
+
+            $scope.setRequestForm = function(){
+                $scope.virtualPage = pages.requestDetail;
+                $scope.$broadcast('clearForm');
+            }
         });
 
 
-        app.controller('RequestsCtrl', function ($scope, $http, requestFactory) {
+        app.controller('RequestsCtrl', function ($scope, $http, requestFactory, pages) {
+
             $http.get('{% url 'api_request_list' %}')
                 .success(function(data, status, headers, config) {
                     $scope.requests = data.results;
                 });
-            $http.get('{% url 'api_performer_list' %}')
-                .success(function(data, status, headers, config) {
-                    $scope.performers = data;
-                });
 
             $scope.edit = function(request){
                 requestFactory.request = request;
-            }
+            };
+
+            $scope.requestEdit = function(id){
+                requestFactory.requestId = id;
+                $scope.redirect(pages.requestDetail);
+            };
+
+            $scope.rowClass = function(request){
+                if(request.out_number){
+                    return 'bg-success';
+                }
+                else{
+                    var curr_date = new Date().valueOf();
+                    var out_date = new Date(request.performance_date.replace(/(\d+)-(\d+)-(\d+)/, '$1/$2/$3')).valueOf();
+                    if(curr_date > out_date){
+                        return 'bg-danger';
+                    }
+                    else{
+                        return 'bg-warning';
+                    }
+                }
+            };
         });
 
 
-        app.controller('RequestFormCtrl', function($scope, $http, $routeParams, $cookies, requestFactory){
-            var id = $routeParams["id"]
-            if(id!=='undefined'){
+        app.controller('RequestFormCtrl', function($scope, $http, $routeParams, $cookies, requestFactory, pages){
+            $scope.$on('clearForm', function(){
+                $scope.request = null;
+            });
+            var id = requestFactory.requestId;
+            requestFactory.requestId = null;
+            if(id){
                 $http.get('{% url 'api_request_list' %}'+ id +'/')
                     .success(function(data) {
                         $scope.request = data;
-                        $scope.request.performer = getPerformer($scope.request.performer, $scope.performers);
                     });
             }
+
             $scope.getPerformerList = function(){ $http.get('{% url 'api_performer_list' %}')
                 .success(function(data, status, headers, config) {
                     $scope.performers = data;
-
+                    $scope.request.performer = getPerformer($scope.request.performer, $scope.performers);
                 });
             }
 
@@ -99,10 +151,10 @@
                     if ($scope.request.id){
                         // Edit request
                         data.performer = data.performer.id
-{#                        data.text = 'some test text'#}
                         $http.put('{% url 'api_request_list' %}'+ $scope.request.id +'/', data)
                             .success(function(data, status, headers, config){
                                 console.log('request success updated');
+                                $scope.redirect(pages.requestList);
                             })
                             .error(function(data, status, headers, config ){
                                 console.log('edit data error ');
@@ -114,16 +166,15 @@
                                 };
                                 console.log($scope.error)
                             })
-
                     }
                     else{
-                        alert('add request');
+                        // Create request
                         $scope.formData = data;
                         data.performer = data.performer.id
                         $http.post('{% url 'api_request_list' %}', data)
                             .success(function(data, status, headers, config){
                                 console.log('request success created');
-                                alert('request success created');
+                                $scope.redirect(pages.requestList);
                             })
                             .error(function(data, status, headers, config ){
                                 alert('error request create');
@@ -136,7 +187,6 @@
                                 };
                                 console.log($scope.error)
                             })
-                        // Create request
                     }
                 }
                 else {
@@ -154,7 +204,7 @@
         });
 
 
-        app.controller('PerformerCtrl', function($scope, $http){
+        app.controller('PerformerCtrl', function($scope, $http, pages){
             $scope.test = 'test test test test'
             $scope.save = function(data, form){
                 if (form.$valid){
@@ -170,48 +220,52 @@
         });
 
 
-        app.factory('requestFactory', function(){
-            return {
-                request: 'test factory'
-            };
-        })
+
+
 
     </script>
 </head>
-<body>
+<body ng-controller="BodyCtrl">
 
     <div class="container-fluid navbar bg-info">
         <div class="navbar-inner ">
             <ul class="nav navbar-nav ">
-                <li class=""><a href="#/requests">Заявки</a></li>
-                <li class=""><a href="#/requests/form">Создать завку</a></li>
-                <li><a href="#/performers/form">Исполнители</a></li>
-                <li class=""><a href="#/logout" >Выйти</a></li>
+                <li ng-click="virtualPage = 'requestTable'"><a>Заявки</a></li>
+                <li ng-click="setRequestForm()"><a>Создать завку</a></li>
+                <li><a ng-click="virtualPage = 'performerForm'">Исполнители</a></li>
+                <li class=""><a href="{% url 'logout' %}" >Выйти</a></li>
             </ul>
         </div>
     </div>
 
 
-    <ng-view></ng-view>
+{#    <ng-view></ng-view>#}
+    <div ng-switch on="virtualPage">
+        <div ng-switch-when="requestTable">
+{#        <script type="text/ng-template" id="RequestTable">#}
+            {% include 'api_request_table.html' %}
+{#        </script>#}
+        </div>
+        <div ng-switch-when="requestForm">
+{#        <script type="text/ng-template" id="RequestForm">#}
+            {% include 'api_request_form.html' %}
+{#        </script>#}
+        </div>
 
-    <script type="text/ng-template" id="RequestTable">
-        {% include 'api_request_table.html' %}
-    </script>
-
-    <script type="text/ng-template" id="RequestForm">
-        {% include 'api_request_form.html' %}
-    </script>
-{% verbatim %}
-    <script type="text/ng-template" id="PerformerForm">
-        <div></div>
-        <form class="form-group form-inline" name="PerformerForm">
-            <div class="form-group">
-                <lable for="newPerformerName">Имя : </lable>
-                <input ng-model="newPerformerName" class="form-control" id="newPerformerName" maxlength="100" type="text" placeholder="Ф.И.О" />
-            </div>
-            <input ng-click="save(newPerformerName, PerformerForm)" class="btn btn-sm btn-success active" type="submit" value="Сохранить"  />
-        </form>
-    </script>
-{% endverbatim %}
+        <div ng-switch-when="performerForm">
+{#        <script type="text/ng-template" id="PerformerForm">#}
+        {% verbatim %}
+            <div></div>
+            <form class="form-group form-inline" name="PerformerForm">
+                <div class="form-group">
+                    <lable for="newPerformerName">Имя : </lable>
+                    <input ng-model="newPerformerName" class="form-control" id="newPerformerName" maxlength="100" type="text" placeholder="Ф.И.О" />
+                </div>
+                <input ng-click="save(newPerformerName, PerformerForm)" class="btn btn-sm btn-success active" type="submit" value="Сохранить"  />
+            </form>
+        {% endverbatim %}
+{#        </script>    #}
+        </div>
+    </div>
 </body>
 </html>

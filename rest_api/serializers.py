@@ -72,3 +72,6 @@ class RequestSerializer(serializers.ModelSerializer):
     #   exclusions = super(RequestSerializer, self).get_validation_exclusions()
     #   return exclusions + ['performer']
 
+
+class RequestGetSerializer(RequestSerializer):
+    performer = PerformerSerializer()
