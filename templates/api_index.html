@@ -6,7 +6,7 @@
 
 {#    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>#}
 {#    <script src="{% static '/static/js/index.js' %}"></script>#}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">#}
     <link rel="stylesheet" type="text/css" href="{% static "/static/css/bootstrap.css" %}">
 {#    <link href="{% static '/static/css/bootstrap-responsive.css' %}" rel="stylesheet">#}
     <link rel="stylesheet" type="text/css" href="{% static "/static/css/index.css" %}">
@@ -17,8 +17,8 @@
 {#    <script src="http://code.angularjs.org/1.1.4/angular-cookies.min.js"></script>#}
 
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-route.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-cookies.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-route.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-cookies.min.js"></script>
 {#    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/{{ settings.ANGULAR_VERSION }}/angular-animate.min.js"></script>#}
 {#    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/{{ settings.ANGULAR_VERSION }}/angular-sanitize.min.js"></script>#}
 
@@ -47,6 +47,26 @@
                 performers : 'performerForm'
             }
         })
+
+        app.factory('getErrorMessage', function(){
+            return function(data, status, headers, config){
+                var errorMessage = 'Error';
+                return data;
+            }
+        })
+
+
+        app.directive('whenScrolled', function() {
+            return function(scope, elm, attr) {
+                var raw = elm[0];
+
+                elm.bind('scroll', function() {
+                    if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
+                        scope.$apply(attr.whenScrolled);
+                    }
+                });
+            };
+        });
 
 {#        app.config($locationProvider.html5Mode(true));#}
 {#        app.config(['$locationProvider', function($locationProvider) {#}
@@ -77,6 +97,7 @@
 {#        });#}
 
 
+        // Общий контроллер + навигация
         app.controller('BodyCtrl', function ($scope, $http, requestFactory, pages) {
             $scope.virtualPage = pages.requestList;
 
@@ -91,6 +112,7 @@
         });
 
 
+        // Контроллер отображения всех заявок
         app.controller('RequestsCtrl', function ($scope, $http, requestFactory, pages) {
 
             $http.get('{% url 'api_request_list' %}')
@@ -122,34 +144,73 @@
                     }
                 }
             };
+
+
+
+
+
         });
 
 
-        app.controller('RequestFormCtrl', function($scope, $http, $routeParams, $cookies, requestFactory, pages){
+        // Контроллер формы Создания/редактирования заявки
+        app.controller('RequestFormCtrl', function($scope, $http, $routeParams, $cookies, requestFactory, pages, getErrorMessage){
             $scope.$on('clearForm', function(){
                 $scope.request = null;
             });
+
+            // Получаем JSON с исполнителями
+            getPerformerList = function(){
+                $http.get('{% url 'api_performer_list' %}')
+                    .success(function(data, status, headers, config) {
+                        $scope.performers = data;
+                        // Инициализация исполнителя в выподающем списке
+                        $scope.request.performer = getPerformer($scope.request.performer, $scope.performers);
+                    })
+                    .error(function(data, status, headers, config ){
+                        console.log('edit data error ');
+                        $scope.error = {
+                            status : status,
+                            headers :headers,
+                            config : config,
+                            data : data
+                        };
+                        console.log($scope.error)
+                    })
+            }
+
+            // Получаем id заявки для редактирования
             var id = requestFactory.requestId;
             requestFactory.requestId = null;
             if(id){
+                // Получаем данные заявки
                 $http.get('{% url 'api_request_list' %}'+ id +'/')
                     .success(function(data) {
                         $scope.request = data;
+                        getPerformerList();
                     });
             }
-
-            $scope.getPerformerList = function(){ $http.get('{% url 'api_performer_list' %}')
-                .success(function(data, status, headers, config) {
-                    $scope.performers = data;
-                    $scope.request.performer = getPerformer($scope.request.performer, $scope.performers);
-                });
+            else{                // Устанавливаем сегодняшнюю входящую дату для новой заявки
+                getPerformerList();
+                var today = new Date();
+                var day = today.getDate();
+                var month = today.getMonth() + 1;
+                var year = today.getFullYear();
+                var todayFormat =  year + '-' + (month > 10 ? '' : '0') + month + '-' + (day > 10 ? '' : '0') + day;
+                $scope.request = { filling_date : todayFormat };
             }
 
+
+
+            // Создаем новую или редактируем старую заявку
             $scope.saveRequest = function(data, form) {
                 if (form.$valid) {
                     $scope.error = undefined;
                     if ($scope.request.id){
                         // Edit request
+                        // заменяем объект исполнителя на id исполнителя
+                        if (data.out_number == ''){
+                            data.out_number = null;
+                        }
                         data.performer = data.performer.id
                         $http.put('{% url 'api_request_list' %}'+ $scope.request.id +'/', data)
                             .success(function(data, status, headers, config){
@@ -158,12 +219,13 @@
                             })
                             .error(function(data, status, headers, config ){
                                 console.log('edit data error ');
-                                $scope.error = {
-                                    status : status,
-                                    headers :headers,
-                                    config : config,
-                                    data : data
-                                };
+                                $scope.error = getErrorMessage(data, status, headers, config);
+{#                                $scope.error = {#}
+{#                                    status : status,#}
+{#                                    headers :headers,#}
+{#                                    config : config,#}
+{#                                    data : data#}
+{#                                };#}
                                 console.log($scope.error)
                             })
                     }
@@ -179,12 +241,13 @@
                             .error(function(data, status, headers, config ){
                                 alert('error request create');
                                 console.log('edit data error ');
-                                $scope.error = {
-                                    status : status,
-                                    headers :headers,
-                                    config : config,
-                                    data : data
-                                };
+                                $scope.error = getErrorMessage(data, status, headers, config);
+{#                                $scope.error = {#}
+{#                                    status : status,#}
+{#                                    headers :headers,#}
+{#                                    config : config,#}
+{#                                    data : data#}
+{#                                };#}
                                 console.log($scope.error)
                             })
                     }
@@ -203,7 +266,7 @@
             };
         });
 
-
+        // Контроллер исполнителей
         app.controller('PerformerCtrl', function($scope, $http, pages){
             $scope.test = 'test test test test'
             $scope.save = function(data, form){
@@ -217,6 +280,15 @@
                         });
                 }
             }
+
+            $scope.items = [];
+            var counter = 0;
+            $scope.loadMore = function() {
+                for (var i = 0; i < 10; i++) {
+                    $scope.items.push({id: counter});
+                    counter += 10;
+                }
+            };
         });
 
 
@@ -226,46 +298,54 @@
     </script>
 </head>
 <body ng-controller="BodyCtrl">
-
-    <div class="container-fluid navbar bg-info">
-        <div class="navbar-inner ">
-            <ul class="nav navbar-nav ">
-                <li ng-click="virtualPage = 'requestTable'"><a>Заявки</a></li>
-                <li ng-click="setRequestForm()"><a>Создать завку</a></li>
-                <li><a ng-click="virtualPage = 'performerForm'">Исполнители</a></li>
-                <li class=""><a href="{% url 'logout' %}" >Выйти</a></li>
-            </ul>
+    {% block header %}
+        <div class="navbar bg-info container-fluid center-block " >
+            <div class="navbar-inner">
+                <ul class="nav navbar-nav ">
+                    <li ng-click="virtualPage = 'requestTable'"><a>Заявки</a></li>
+                    <li ng-click="setRequestForm()"><a>Создать завку</a></li>
+                    <li><a ng-click="virtualPage = 'performerForm'">Исполнители</a></li>
+                    <li class=""><a href="{% url 'logout' %}" >Выйти</a></li>
+                </ul>
+            </div>
         </div>
-    </div>
+    {% endblock header %}
 
+    {% block content %}
+    {#    <ng-view></ng-view>#}
+        <div ng-switch on="virtualPage" class="container-fluid center-block">
+            <div ng-switch-when="requestTable">
+    {#        <script type="text/ng-template" id="RequestTable">#}
+                {% include 'api_request_table.html' %}
+    {#        </script>#}
+            </div>
+            <div ng-switch-when="requestForm">
+    {#        <script type="text/ng-template" id="RequestForm">#}
+                {% include 'api_request_form.html' %}
+    {#        </script>#}
+            </div>
 
-{#    <ng-view></ng-view>#}
-    <div ng-switch on="virtualPage">
-        <div ng-switch-when="requestTable">
-{#        <script type="text/ng-template" id="RequestTable">#}
-            {% include 'api_request_table.html' %}
-{#        </script>#}
-        </div>
-        <div ng-switch-when="requestForm">
-{#        <script type="text/ng-template" id="RequestForm">#}
-            {% include 'api_request_form.html' %}
-{#        </script>#}
-        </div>
-
-        <div ng-switch-when="performerForm">
-{#        <script type="text/ng-template" id="PerformerForm">#}
-        {% verbatim %}
-            <div></div>
-            <form class="form-group form-inline" name="PerformerForm">
-                <div class="form-group">
-                    <lable for="newPerformerName">Имя : </lable>
-                    <input ng-model="newPerformerName" class="form-control" id="newPerformerName" maxlength="100" type="text" placeholder="Ф.И.О" />
+            <div ng-switch-when="performerForm">
+    {#        <script type="text/ng-template" id="PerformerForm">#}
+            {% verbatim %}
+                <div ng-controller="PerformerCtrl">
+                    <form class="form-group form-inline" name="PerformerForm">
+                        <div class="form-group">
+                            <lable for="newPerformerName">Имя : </lable>
+                            <input ng-model="newPerformerName" class="form-control" id="newPerformerName" maxlength="100" type="text" placeholder="Ф.И.О" />
+                        </div>
+                        <input ng-click="save(newPerformerName, PerformerForm)" class="btn btn-sm btn-success active" type="submit" value="Сохранить"  />
+                    </form >
+                    <!--div when-scrolled="loadMore()">
+                        <ul>
+                            <li ng-repeat="i in items" style="height: 120px; border-bottom: 1px solid gray;">{{i.id}} : {{i.counter}}</li>
+                        </ul>
+                    </div-->
                 </div>
-                <input ng-click="save(newPerformerName, PerformerForm)" class="btn btn-sm btn-success active" type="submit" value="Сохранить"  />
-            </form>
-        {% endverbatim %}
-{#        </script>    #}
+            {% endverbatim %}
+    {#        </script>    #}
+            </div>
         </div>
-    </div>
+    {% endblock content %}
 </body>
 </html>

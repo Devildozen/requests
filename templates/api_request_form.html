@@ -10,7 +10,7 @@
         {{ request.applicant }}<br/>
         {{ request.performer.name }}<br/>
 -->
-        <div ng-if="error">
+        <div ng-if="error" class="alert alert-danger">
             {{ error }}
                     <!--ul>
             <ul>
@@ -32,7 +32,7 @@
 
             <div class="form-group col-md-2 col-md-offset-8">
                 <lable for="in_number">№ входящий:</lable>
-                <input ng-model="request.in_number" class="form-control" id="in_number" ng-pattern="/\d+/" required placeholder="Входящий номер заявки" />
+                <input ng-model="request.in_number" class="form-control" id="in_number" ng-pattern="/^\d+$/" required placeholder="Входящий номер заявки" />
             </div>
 
             <div class="form-group col-md-2 col-md-offset-10">
@@ -47,10 +47,11 @@
                 <textarea ng-model="request.text" class="form-control " id="text" ></textarea>
             </div>
 
-            <div ng-init="getPerformerList()" class="form-group col-md-2">
+            <div class="form-group col-md-2">
                 <!--
                 {{ request.performer}}<br/>
                 {{ performers[4] }}<br/>
+                <select ng-init="getPerformerList()" ng-model="request.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
                 -->
                 <lable for="performer">Исполнитель:</lable>
                 <select ng-model="request.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
@@ -63,7 +64,7 @@
 
             <div ng-if="request.id" class="form-group col-md-2 col-md-offset-10">
                 <lable for="out_number">№ исходящий:</lable>
-                <input ng-model="request.out_number" class="form-control" id="out_number" ng-pattern="/\d+/" placeholder="Номер исходящий" />
+                <input ng-model="request.out_number" class="form-control" id="out_number" ng-pattern="/^\d+$/" placeholder="Номер исходящий" />
             </div>
 
             <input ng-click="saveRequest(request, RequestForm)" class="btn btn-sm btn-success active col-md-1 col-md-offset-1" type="submit" value="Сохранить"  />

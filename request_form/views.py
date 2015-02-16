@@ -27,7 +27,7 @@ def my_login(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect(reverse('requests'))
+                return HttpResponseRedirect(reverse('index'))
         else:
             template_context['error'] = 'Неправильный логин или пароль'
 

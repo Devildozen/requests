@@ -57,6 +57,12 @@ class RequestEditForm (RequestCreateForm):
 
 
 class LoginForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(forms.Form, self).__init__(*args, **kwargs)
+        # adding css classes to widgets without define the fields:
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+
     username = forms.CharField(label='Логин:', max_length=100)
     password = forms.CharField(widget=forms.PasswordInput,
                                label="Пароль:" )

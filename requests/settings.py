@@ -98,7 +98,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAdminUser',
         # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ),
-    'PAGINATE_BY': 100
+    'PAGINATE_BY': 10
 }
 
 # ANGULAR_VERSION = '1.1.4'

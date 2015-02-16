@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 # from rest_api.serializers import *
 from request_form.models import Performers, Requests
@@ -43,8 +44,20 @@ class PerformerSerializer(serializers.ModelSerializer):
 
 
 class RequestSerializer(serializers.ModelSerializer):
+    # def __init__(self, *args, **kwargs):
+    #     super(RequestSerializer, self).__init__(*args, **kwargs)
+    #     self.fields['in_number'].error_messages['unique'] = u'My custom required msg'
+
     class Meta:
         model = Requests
+
+        # validators = [
+        #     UniqueTogetherValidator(
+        #         queryset=Requests.objects.all(),
+        #         fields = ('in_number'),
+        #         message='wrong in number'
+        #     )
+        # ]
 
     # performer = serializers.PrimaryKeyRelatedField(
     # performer = serializers.StringRelatedField(

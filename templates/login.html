@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'api_index.html' %}
 
 {% block title %}
     Вход
@@ -8,21 +8,25 @@
 {% endblock header %}
 
 {% block content %}
-    {% block error %}
-        <h3>{{ error }}</h3>
-    {% endblock error %}
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <div>
-            {{ form.username.errors }}
-            <lable for="id_username">Логин:</lable>
-            {{ form.username }}
-        </div>
-        <div>
-            {{ form.password.errors }}
-            <lable for="id_password">Пароль:</lable>
-            {{ form.password }}
-        </div>
-        <input type="submit" value="Войти">
-    </form>
+    <div class="center-block container-fluid">
+        {% block error %}
+            {% if error %}
+                <div class="alert alert-danger text-center col-md-4 col-md-offset-4">{{ error }}</div>
+            {% endif %}
+        {% endblock error %}
+        <form class="form form-group row" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group col-md-2 col-md-offset-5">
+                {{ form.username.errors }}
+                <lable for="id_username">Логин:</lable>
+                {{ form.username }}
+            </div>
+            <div class="form-group col-md-2 col-md-offset-5">
+                {{ form.password.errors }}
+                <lable for="id_password">Пароль:</lable>
+                {{ form.password }}
+            </div>
+            <input class="btn btn-sm btn-success col-md-2 col-md-offset-5" type="submit" value="Войти">
+        </form>
+    </div>
 {% endblock content %}

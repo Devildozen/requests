@@ -8,7 +8,8 @@
 # from django.views.generic import ListView, CreateView
 # from django.contrib.auth import authenticate, login, logout,
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.conf import settings
 # from django.contrib.auth.models import User, Group
 
@@ -33,7 +34,9 @@ from rest_api.serializers import *
 
 @api_view(['GET', 'POST'])
 def index(request):
+    if request.user.is_authenticated():
         return render(request, 'api_index.html')
+    return HttpResponseRedirect(reverse('login'))
 
 
 @api_view(['GET', 'POST'])
@@ -108,6 +111,10 @@ class RequestsList(generics.ListCreateAPIView):
     ]
     serializer_class = RequestGetSerializer
 
+    # def get(self, request, format=None):
+        #process keywords first
+        # keywords_query = urllib.unquote_plus(request.QUERY_PARAMS.get('q', ""))
+
     def get(self, request, *args, **kwargs):
         self.serializer_class = RequestGetSerializer
         return self.list(request, *args, **kwargs)
@@ -135,3 +142,4 @@ class PerformerRequestList(generics.ListAPIView):
     def get_queryset(self):
         queryset = super(PerformerRequestList, self).get_queryset()
         return queryset.filter(performer=self.kwargs.get('id'))
+
