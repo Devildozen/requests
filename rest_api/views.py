@@ -21,6 +21,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 # from rest_framework.reverse import reverse
 from rest_framework.response import Response
+from rest_framework.filters import OrderingFilter
 # from rest_framework.permissions import IsAuthenticated
 
 
@@ -36,22 +37,30 @@ from rest_api.serializers import *
 
 
 class RequestsFilter(django_filters.FilterSet):
-    performer = django_filters.CharFilter(name='performer__name', lookup_type='icontains')
-    applicant = django_filters.CharFilter(name='applicant', lookup_type='icontains')
+    performer = django_filters.CharFilter(name='performer__name',
+                                          lookup_type='icontains')
+    applicant = django_filters.CharFilter(name='applicant',
+                                          lookup_type='icontains')
+    in_number = django_filters.CharFilter(name='in_number',
+                                          lookup_type='icontains')
+    out_number = django_filters.CharFilter(name='out_number',
+                                           lookup_type='icontains')
+    text = django_filters.CharFilter(name='text',
+                                     lookup_type='icontains')
 
-    in_number = django_filters.CharFilter(name='in_number', lookup_type='icontains')
-    out_number = django_filters.CharFilter(name='out_number', lookup_type='icontains')
+    in_year = django_filters.CharFilter(name='filling_date',
+                                        lookup_type='year')
+    in_month = django_filters.CharFilter(name='filling_date',
+                                         lookup_type='month')
+    in_day = django_filters.CharFilter(name='filling_date',
+                                       lookup_type='day')
 
-
-    text = django_filters.CharFilter(name='text', lookup_type='icontains')
-
-    in_year = django_filters.CharFilter(name='filling_date', lookup_type='year')
-    in_month = django_filters.CharFilter(name='filling_date', lookup_type='month')
-    in_day = django_filters.CharFilter(name='filling_date', lookup_type='day')
-
-    out_year = django_filters.CharFilter(name='performance_date', lookup_type='year')
-    out_month = django_filters.CharFilter(name='performance_date', lookup_type='month')
-    out_day = django_filters.CharFilter(name='performance_date', lookup_type='day')
+    out_year = django_filters.CharFilter(name='performance_date',
+                                         lookup_type='year')
+    out_month = django_filters.CharFilter(name='performance_date',
+                                          lookup_type='month')
+    out_day = django_filters.CharFilter(name='performance_date',
+                                        lookup_type='day')
 
     class Meta:
         model = Requests
@@ -70,7 +79,14 @@ class RequestsFilter(django_filters.FilterSet):
             'out_month',
             'out_day',
         ]
+        order_by = ('id',)
+        # order_by = ['-id']
+        # ordering_fields = ('id', 'in_number', 'out_number')
 
+    def get_order_by(self, order_value):
+        if self.data.has_key('ordering'):
+            return [self.data['ordering']]
+        return super(RequestsFilter, self).get_order_by(order_value)
 
 @api_view(['GET', 'POST'])
 def index(request):
@@ -128,7 +144,7 @@ class PerformersList(generics.ListCreateAPIView):
     ]
 
 
-#class RequestsList(generics.ListAPIView):
+# class RequestsList(generics.ListAPIView):
 #    queryset = Requests.objects.all()
 #    # model = Requests
 #    serializer_class = RequestGetSerializer
@@ -136,7 +152,7 @@ class PerformersList(generics.ListCreateAPIView):
 #        permissions.IsAuthenticated
 #    ]
 #
-#class RequestCreate(generics.CreateAPIView):
+# class RequestCreate(generics.CreateAPIView):
 #    queryset = Requests.objects.all()
 #    # model = Requests
 #    serializer_class = RequestSerializer
@@ -147,14 +163,16 @@ class PerformersList(generics.ListCreateAPIView):
 class RequestsList(generics.ListCreateAPIView):
     queryset = Requests.objects.all()
     filter_class = RequestsFilter
+    # filter_backends = (OrderingFilter,)
+    # filter_backends = (OrderingFilter,)
+    # ordering_fields = '__all__'
+    # ordering_fields = ('id', 'in_number', 'out_number')
+    # ordering = ('-id',)
+
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = RequestGetSerializer
-
-    # def get(self, request, format=None):
-    #     process keywords first
-    #     keywords_query = urllib.unquote_plus(request.QUERY_PARAMS.get('q', ""))
 
     def get(self, request, *args, **kwargs):
         self.serializer_class = RequestGetSerializer
@@ -183,4 +201,3 @@ class PerformerRequestList(generics.ListAPIView):
     def get_queryset(self):
         queryset = super(PerformerRequestList, self).get_queryset()
         return queryset.filter(performer=self.kwargs.get('id'))
-

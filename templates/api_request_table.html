@@ -51,7 +51,6 @@
                 <th>Заявитель</th>
                 <th>Исполнитель</th>
                 <th>Редактировать</th>
-                -->
                 <th ng-click="sortType = sortType == 'in_number'? '-in_number' : 'in_number' " class="btn-default">Номер входящей</th>
                 <th ng-click="sortType = sortType == 'out_number' ? '-out_number' : 'out_number'" class="btn-default">Номер исходящей</th>
                 <th ng-click="sortType = sortType == 'text' ? 'text' : '-text'"class="btn-default">Текст</th>
@@ -59,10 +58,18 @@
                 <th ng-click="sortType = sortType == 'performance_date' ? '-performance_date' : 'performance_date'" class="btn-default">Срок исполнения</th>
                 <th ng-click="sortType = sortType == 'applicant' ? '-applicant' : 'applicant'" class="btn-default">Заявитель</th>
                 <th ng-click="sortType = sortType == 'performer.name' ? '-performer.name' : 'performer.name'" class="btn-default">Исполнитель</th>
+                -->
+                <th ng-click="orderBy('in_number')">Номер входящей</th>
+                <th ng-click="orderBy('out_number')">Номер исходящей</th>
+                <th ng-click="orderBy('text')">Текст</th>
+                <th ng-click="orderBy('filling_date')">Дата подачи </th>
+                <th ng-click="orderBy('performance_date')">Срок исполнения</th>
+                <th ng-click="orderBy('applicant')">Заявитель</th>
+                <th ng-click="orderBy('performer.name')">Исполнитель</th>
                 <th>Редактировать</th>
 
             </tr>
-                <tr ng-repeat="request in requests | orderBy:sortType " ng-class="rowClass(request)">
+                <tr ng-repeat="request in requests" ng-class="rowClass(request)">
                 <td>{{ request.in_number }}</td>
                 <td>{{ request.out_number}}</td>
                 <td>{{ request.text }}</td>

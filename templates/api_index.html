@@ -114,9 +114,9 @@
 
 //-------------------- Контроллер отображения всех заявок --------------------
         app.controller('RequestsCtrl', function ($scope, $http, requestFactory, pages) {
-
-            var getFilters = function(){
-                var filters = null;
+            ordering = null;
+            var getParams = function(){
+                var filters = new Object();
                 if ($scope.filters){
                     filters = JSON.stringify($scope.filters);
                     filters = JSON.parse(filters);
@@ -126,8 +126,17 @@
 {#                    if (filters.filling_date){}#}
 {#                    if (filters.performance_date){}#}
                 }
+                if (ordering){
+                    filters.ordering = ordering;
+                }
+                console.log(filters)
                 return filters;
             };
+
+            $scope.orderBy = function(field){
+                ordering = field;
+                $scope.getRequests();
+            }
 
             console.log($scope.f)
             $scope.getPerformerList = function(){
@@ -141,11 +150,11 @@
             };
 
             $scope.getRequests = function(){
-                $http.get('{% url 'api_request_list' %}', {params: getFilters() })
+                $http.get('{% url 'api_request_list' %}', {params: getParams() })
                     .success(function(data, status, headers, config) {
                         $scope.requests = data.results;
                     });
-            }
+            };
 
             $scope.edit = function(request){
                 requestFactory.request = request;
