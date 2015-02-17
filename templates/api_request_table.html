@@ -7,33 +7,36 @@
                 <select ng-model="f.performer" ng-options="performer.name for performer in performers" id="fPerformer" >{{ performer.name }}</select>
             -->
             <div class="col-md-2">
-                <label for="fNum">Входящий номер: </label>
-                <input ng-model="f.in_number" id="fNum">
+                <label for="fNum">Номер Заявки: </label>
+                <input ng-change="getRequests()" ng-model="filters.in_number" id="fNum" class="form-control">
             </div>
             <div class="col-md-2">
                 <label for="fNum">Исходящий номер: </label>
-                <input ng-model="f.out_number" id="fNum">
+                <input ng-change="getRequests()" ng-model="filters.out_number" id="fNum" class="form-control">
             </div>
             <div class="col-md-2">
                 <label for="fApplicant">Заявитель:</label>
-                <input ng-model="f.applicant" id="fApplicant">
+                <input ng-change="getRequests()" ng-model="filters.applicant" id="fApplicant" class="form-control">
             </div>
             <div class="col-md-2">
                 <label for="fPerformer">Исполнитель: </label>
-                <input ng-model="f.performer" id="fPerformer">
+                <select ng-change="getRequests()"  ng-init="getPerformerList()" ng-model="filters.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}
+                    <option value=" "><option>
+                </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2" >
                 <label for="fInDate">Дата подачи: </label>
-                <input ng-model="f.filling_date" id="fInDate">
+                <input ng-change="getRequests()"  ng-model="filters.filling_date" id="fInDate" class="form-control">
             </div>
             <div class="col-md-2">
                 <label for="fOutDate">Cрок исполнения: </label>
-                <input ng-model="f.performance_date" type="date" id="fOutDate">
+                <input ng-change="getRequests()" ng-model="filters.performance_date" type="date" id="fOutDate" class="form-control">
             </div>
             <div class="col-md-12">
                 <label for="fText">Текст: </label>
-                <textarea  ng-model="f.text" class="col-md-12" id="fText"></textarea>
+                <textarea ng-change="getRequests()" ng-model="filters.text" class="col-md-12 form-control" id="fText"></textarea>
             </div>
+            <!--button class="btn btn-default" ng-click="getRequests()"> Update </button-->
         </div>
 
 
@@ -59,7 +62,7 @@
                 <th>Редактировать</th>
 
             </tr>
-                <tr ng-repeat="request in requests | filter: f | orderBy:sortType " ng-class="rowClass(request)">
+                <tr ng-repeat="request in requests | orderBy:sortType " ng-class="rowClass(request)">
                 <td>{{ request.in_number }}</td>
                 <td>{{ request.out_number}}</td>
                 <td>{{ request.text }}</td>

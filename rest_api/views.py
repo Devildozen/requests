@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 # ? Спросить - валидация на сервере а ошибки генерирует рест, какое сообщение выводить юзеру.
+# Попробовать отднльную переменную для перформера в поле подстановки
+# Объединить изменение и создание заявки в ангуляре
 # Узнать как отлавливать неавторизованного юзера
 # Поле даты сделать пустым или сегодняшнюю
 # посмотреть Изменение номера заявки
@@ -10,6 +12,7 @@
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+import django_filters
 from django.conf import settings
 # from django.contrib.auth.models import User, Group
 
@@ -30,6 +33,43 @@ from rest_api.serializers import *
 #        'users': reverse('user-list', request=request),
 #        'groups': reverse('group-list', request=request),
 #     })
+
+
+class RequestsFilter(django_filters.FilterSet):
+    performer = django_filters.CharFilter(name='performer__name', lookup_type='icontains')
+    applicant = django_filters.CharFilter(name='applicant', lookup_type='icontains')
+
+    in_number = django_filters.CharFilter(name='in_number', lookup_type='icontains')
+    out_number = django_filters.CharFilter(name='out_number', lookup_type='icontains')
+
+
+    text = django_filters.CharFilter(name='text', lookup_type='icontains')
+
+    in_year = django_filters.CharFilter(name='filling_date', lookup_type='year')
+    in_month = django_filters.CharFilter(name='filling_date', lookup_type='month')
+    in_day = django_filters.CharFilter(name='filling_date', lookup_type='day')
+
+    out_year = django_filters.CharFilter(name='performance_date', lookup_type='year')
+    out_month = django_filters.CharFilter(name='performance_date', lookup_type='month')
+    out_day = django_filters.CharFilter(name='performance_date', lookup_type='day')
+
+    class Meta:
+        model = Requests
+        fields = [
+            'in_number',
+            'out_number',
+            'filling_date',
+            'performance_date',
+            'text',
+            'applicant',
+            'performer',
+            'in_year',
+            'in_month',
+            'in_day',
+            'out_year',
+            'out_month',
+            'out_day',
+        ]
 
 
 @api_view(['GET', 'POST'])
@@ -106,14 +146,15 @@ class PerformersList(generics.ListCreateAPIView):
 
 class RequestsList(generics.ListCreateAPIView):
     queryset = Requests.objects.all()
+    filter_class = RequestsFilter
     permission_classes = [
         permissions.IsAuthenticated
     ]
     serializer_class = RequestGetSerializer
 
     # def get(self, request, format=None):
-        #process keywords first
-        # keywords_query = urllib.unquote_plus(request.QUERY_PARAMS.get('q', ""))
+    #     process keywords first
+    #     keywords_query = urllib.unquote_plus(request.QUERY_PARAMS.get('q', ""))
 
     def get(self, request, *args, **kwargs):
         self.serializer_class = RequestGetSerializer

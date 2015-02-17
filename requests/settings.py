@@ -98,8 +98,12 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAdminUser',
         # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ),
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
     'PAGINATE_BY': 10
 }
+
+
+
 
 # ANGULAR_VERSION = '1.1.4'
 ANGULAR_VERSION = '1.2.20'
