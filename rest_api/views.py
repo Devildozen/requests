@@ -9,6 +9,8 @@
 # from django.core.urlresolvers import reverse
 # from django.views.generic import ListView, CreateView
 # from django.contrib.auth import authenticate, login, logout,
+import re
+
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -34,7 +36,7 @@ from rest_api.serializers import *
 #        'users': reverse('user-list', request=request),
 #        'groups': reverse('group-list', request=request),
 #     })
-
+ordering_reg = re.compile('^-?[a-zA-Zа-яА-ЯёЁ_]+$')
 
 class RequestsFilter(django_filters.FilterSet):
     performer = django_filters.CharFilter(name='performer__name',
@@ -79,13 +81,28 @@ class RequestsFilter(django_filters.FilterSet):
             'out_month',
             'out_day',
         ]
-        order_by = ('id',)
+        order_by = ('-id',)
+        ordering_fields = (
+            'id',
+            'in_number',
+            'out_number',
+            'filling_date',
+            'performance_date',
+            'text',
+            'applicant',
+            'performer__name',
+        )
+
         # order_by = ['-id']
-        # ordering_fields = ('id', 'in_number', 'out_number')
 
     def get_order_by(self, order_value):
         if self.data.has_key('ordering'):
-            return [self.data['ordering']]
+            ordering = self.data['ordering']
+            if ordering_reg.match(ordering):
+                if self.Meta.ordering_fields.count(ordering.replace('-', '')):
+                    return [ordering]
+            if order_value:
+                return [order_value]
         return super(RequestsFilter, self).get_order_by(order_value)
 
 @api_view(['GET', 'POST'])

@@ -129,16 +129,17 @@
                 if (ordering){
                     filters.ordering = ordering;
                 }
-                console.log(filters)
+                console.log(filters);
                 return filters;
             };
 
             $scope.orderBy = function(field){
-                ordering = field;
+{#                ordering = field;#}
+                ordering = ordering == field ? '-' + field : field;
+                console.log(ordering)
                 $scope.getRequests();
-            }
+            };
 
-            console.log($scope.f)
             $scope.getPerformerList = function(){
                 $http.get('{% url 'api_performer_list' %}')
                     .success(function(data, status, headers, config) {
