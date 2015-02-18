@@ -4,12 +4,13 @@
 <html ng-app="myApp">
 <head>
 
-{#    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>#}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
 {#    <script src="{% static '/static/js/index.js' %}"></script>#}
 {#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">#}
     <link rel="stylesheet" type="text/css" href="{% static "/static/css/bootstrap.css" %}">
-{#    <link href="{% static '/static/css/bootstrap-responsive.css' %}" rel="stylesheet">#}
     <link rel="stylesheet" type="text/css" href="{% static "/static/css/index.css" %}">
+{#    <link href="{% static '/static/css/bootstrap-responsive.css' %}" rel="stylesheet">#}
 
 {#    <script src="http://code.angularjs.org/1.1.4/angular.min.js"></script>#}
 {#    <script src="http://code.angularjs.org/1.1.4/angular-sanitize.min.js"></script>#}
@@ -19,6 +20,7 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-route.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-cookies.min.js"></script>
+    <script src="{% static '/static/js/ng-infinite-scroll.js' %}"></script>
 {#    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/{{ settings.ANGULAR_VERSION }}/angular-animate.min.js"></script>#}
 {#    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/{{ settings.ANGULAR_VERSION }}/angular-sanitize.min.js"></script>#}
 
@@ -26,7 +28,7 @@
 
     <script>
 {#        var app = angular.module('myApp', [])#}
-        var app = angular.module("myApp", ['ngRoute', 'ngCookies']);
+        var app = angular.module("myApp", ['ngRoute', 'ngCookies', 'infinite-scroll']);
         app.run(['$http','$cookies', function($http, $cookies)
         {
             $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -114,30 +116,48 @@
 
 //-------------------- Контроллер отображения всех заявок --------------------
         app.controller('RequestsCtrl', function ($scope, $http, requestFactory, pages) {
+            readyGetNextPage = false;
             ordering = null;
-            var getParams = function(){
-                var filters = new Object();
-                if ($scope.filters){
-                    filters = JSON.stringify($scope.filters);
-                    filters = JSON.parse(filters);
-                    if (filters.performer){
-                        filters.performer = filters.performer.name;
+            nextPage = null;
+            var getParams = function(changed) {
+                var params = new Object();
+                // Добавляем фильтры в параметры запроса
+                    if ($scope.filters) {
+                        params = JSON.stringify($scope.filters);
+                        params = JSON.parse(params);
+                        if (params.performer) {
+                            params.performer = params.performer.name;
+                        }
                     }
-{#                    if (filters.filling_date){}#}
-{#                    if (filters.performance_date){}#}
-                }
+                // добавляем сортировку
                 if (ordering){
-                    filters.ordering = ordering;
+                    params.ordering = ordering;
                 }
-                console.log(filters);
-                return filters;
+                // если нужна следующая страница добавляем параметр, в остальных случаях сбрасываем страницу
+                if (changed == 'page') {
+                    // добавляем страницу
+                    if (nextPage){
+                        page = nextPage.substring(nextPage.indexOf('page=')+5)
+                        if (page.indexOf('&') != -1){
+                            params.page = page.substring(0,page.indexOf('&'))
+                        }
+                        else{
+                            params.page = page;
+                        }
+                    }
+                }
+                else{
+                    params.nextPage = null;
+                    $scope.requests = [];
+                }
+                return params;
             };
 
             $scope.orderBy = function(field){
 {#                ordering = field;#}
+                console.log(field)
                 ordering = ordering == field ? '-' + field : field;
-                console.log(ordering)
-                $scope.getRequests();
+                $scope.getRequests('order');
             };
 
             $scope.getPerformerList = function(){
@@ -150,10 +170,23 @@
                     })
             };
 
-            $scope.getRequests = function(){
-                $http.get('{% url 'api_request_list' %}', {params: getParams() })
+            $scope.loadMore = function() {
+
+                if (!nextPage){
+                    return
+                }
+                if(readyGetNextPage) {
+                    readyGetNextPage = false;
+                    $scope.getRequests('page');
+                }
+            };
+
+            $scope.getRequests = function(changed){
+                $http.get('{% url 'api_request_list' %}', {params: getParams(changed)})
                     .success(function(data, status, headers, config) {
-                        $scope.requests = data.results;
+                        $scope.requests = $scope.requests.concat(data.results);
+                        nextPage = data.next;
+                        readyGetNextPage = true;
                     });
             };
 
@@ -168,16 +201,19 @@
 
             $scope.rowClass = function(request){
                 if(request.out_number){
-                    return 'bg-success';
+{#                    return 'bg-success';#}
+                    return 'status_complete';
                 }
                 else{
                     var curr_date = new Date().valueOf();
                     var out_date = new Date(request.performance_date.replace(/(\d+)-(\d+)-(\d+)/, '$1/$2/$3')).valueOf();
                     if(curr_date > out_date){
-                        return 'bg-danger';
+{#                        return 'bg-danger';#}
+                        return 'status_overdue';
                     }
                     else{
-                        return 'bg-warning';
+{#                        return 'bg-warning';#}
+                        return 'status_active';
                     }
                 }
             };
@@ -321,11 +357,12 @@
 
     </script>
 </head>
-<body ng-controller="BodyCtrl">
+<body ng-controller="BodyCtrl" class="container">
     {% block header %}
-        <div class="navbar bg-info container-fluid center-block " >
+        <div class="navbar navbar-inverse container-fluid" >
+{#        <div class="navbar bg-info container-fluid center-block " >#}
             <div class="navbar-inner">
-                <ul class="nav navbar-nav ">
+                <ul class="nav navbar-nav">
                     <li ng-click="virtualPage = 'requestTable'"><a>Заявки</a></li>
                     <li ng-click="setRequestForm()"><a>Создать завку</a></li>
                     <li><a ng-click="virtualPage = 'performerForm'">Исполнители</a></li>

@@ -39,8 +39,7 @@ from rest_api.serializers import *
 ordering_reg = re.compile('^-?[a-zA-Zа-яА-ЯёЁ_]+$')
 
 class RequestsFilter(django_filters.FilterSet):
-    performer = django_filters.CharFilter(name='performer__name',
-                                          lookup_type='icontains')
+    performer = django_filters.CharFilter(name='performer__name')
     applicant = django_filters.CharFilter(name='applicant',
                                           lookup_type='icontains')
     in_number = django_filters.CharFilter(name='in_number',
@@ -96,6 +95,7 @@ class RequestsFilter(django_filters.FilterSet):
         # order_by = ['-id']
 
     def get_order_by(self, order_value):
+        # return [self.data['ordering']]
         if self.data.has_key('ordering'):
             ordering = self.data['ordering']
             if ordering_reg.match(ordering):

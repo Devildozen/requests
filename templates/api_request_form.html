@@ -26,7 +26,7 @@
         </div>
         <form class="form-group row" name="RequestForm">
             <div class="form-group col-md-2">
-                <lable for="applicant">Заявитель:</lable>
+                <lable for="applicant" class="glyphicon glyphicon-user"> Заявитель:</lable>
                 <input ng-model="request.applicant" class="form-control" id="applicant" maxlength="100" type="text" required placeholder="Заявитель" />
             </div>
 
@@ -36,7 +36,7 @@
             </div>
 
             <div class="form-group col-md-2 col-md-offset-10">
-                <lable for="filling_date">Дата подачи:</lable>
+                <lable for="filling_date" class="glyphicon glyphicon-calendar">Дата подачи:</lable>
                 <input ng-model="request.filling_date" class="form-control" id="filling_date" type="date" required  />
             </div>
 
@@ -53,12 +53,12 @@
                 {{ performers[4] }}<br/>
                 <select ng-init="getPerformerList()" ng-model="request.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
                 -->
-                <lable for="performer">Исполнитель:</lable>
-                <select ng-model="request.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
+                <lable for="performer" class="glyphicon glyphicon-user"> Исполнитель:</lable>
+                <select ng-model="request.performer" ng-options="performer.name for performer in perfor mers"  class="form-control" id="performer" >{{ performer.name }}</select>
             </div>
 
             <div class="form-group col-md-2 col-md-offset-8">
-                <lable for="performance_date">Срок исполнения:</lable>
+                <lable for="performance_date" class="glyphicon glyphicon-calendar">Срок исполнения:</lable>
                 <input ng-model="request.performance_date" class="form-control" id="performance_date" type="date" required />
             </div>
 
