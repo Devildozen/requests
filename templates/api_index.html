@@ -27,7 +27,6 @@
 {#    <script src="http://code.angularjs.org/1.1.4/angular-resource.js"></script>#}
 
     <script>
-{#        var app = angular.module('myApp', [])#}
         var app = angular.module("myApp", ['ngRoute', 'ngCookies', 'infinite-scroll']);
         app.run(['$http','$cookies', function($http, $cookies)
         {
@@ -35,40 +34,30 @@
             $http.defaults.headers.put['X-CSRFToken'] = $cookies.csrftoken;
         }]);
 
-        app.factory('requestFactory', function(){
+        // Храним id редактируемой заявки при переходе на страницу редактирования
+        app.factory('editedRequest', function(){
             return {
-                requestId: null,
-                request: null
+                id: null
             };
-        })
+        });
 
+        // Страницы для переходов
         app.factory('pages', function(){
             return {
                 requestList : 'requestTable',
                 requestDetail : 'requestForm',
                 performers : 'performerForm'
             }
-        })
+        });
 
+        // формируем сообщение об ошибки для запросов
         app.factory('getErrorMessage', function(){
             return function(data, status, headers, config){
                 var errorMessage = 'Error';
                 return data;
             }
-        })
-
-
-        app.directive('whenScrolled', function() {
-            return function(scope, elm, attr) {
-                var raw = elm[0];
-
-                elm.bind('scroll', function() {
-                    if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
-                        scope.$apply(attr.whenScrolled);
-                    }
-                });
-            };
         });
+
 
 {#        app.config($locationProvider.html5Mode(true));#}
 {#        app.config(['$locationProvider', function($locationProvider) {#}
@@ -100,42 +89,44 @@
 
 
 //-------------------- Общий контроллер + навигация --------------------
-        app.controller('BodyCtrl', function ($scope, $http, requestFactory, pages, getErrorMessage) {
+        app.controller('BodyCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage) {
             $scope.virtualPage = pages.requestList;
 
             $scope.redirect = function(page){
                 $scope.virtualPage = page;
-            }
+            };
 
             $scope.setRequestForm = function(){
                 $scope.virtualPage = pages.requestDetail;
+                // При переходе с редактируемой заметки на создание новой, очищаем форму
                 $scope.$broadcast('clearForm');
             }
         });
 
 
-//-------------------- Контроллер отображения всех заявок --------------------
-        app.controller('RequestsCtrl', function ($scope, $http, requestFactory, pages) {
-            readyGetNextPage = false;
+//-------------------- Контроллер отображения таблицы заявок --------------------
+        app.controller('RequestsCtrl', function ($scope, $http, editedRequest, pages) {
+            readyGetNextPage = true;
             ordering = null;
             nextPage = null;
+
+            // Формирование данных для GET запрос - фильтры, сортировка, страница
             var getParams = function(changed) {
-                var params = new Object();
-                // Добавляем фильтры в параметры запроса
-                    if ($scope.filters) {
-                        params = JSON.stringify($scope.filters);
-                        params = JSON.parse(params);
-                        if (params.performer) {
-                            params.performer = params.performer.name;
-                        }
+                var params = {};
+                if ($scope.filters) {
+                    params = JSON.stringify($scope.filters);
+                    params = JSON.parse(params);
+                    if (params.performer) {
+                        params.performer = params.performer.name;
                     }
+                }
                 // добавляем сортировку
                 if (ordering){
                     params.ordering = ordering;
                 }
-                // если нужна следующая страница добавляем параметр, в остальных случаях сбрасываем страницу
+                // если нужна следующая страница добавляем номер страницы в параметры запроса,
+                // в остальных случаях сбрасываем номер страницы.
                 if (changed == 'page') {
-                    // добавляем страницу
                     if (nextPage){
                         page = nextPage.substring(nextPage.indexOf('page=')+5)
                         if (page.indexOf('&') != -1){
@@ -154,12 +145,12 @@
             };
 
             $scope.orderBy = function(field){
-{#                ordering = field;#}
-                console.log(field)
+                // Определяем по какому полю сортировать.
                 ordering = ordering == field ? '-' + field : field;
                 $scope.getRequests('order');
             };
 
+            // Получаем список всех исполнителей.
             $scope.getPerformerList = function(){
                 $http.get('{% url 'api_performer_list' %}')
                     .success(function(data, status, headers, config) {
@@ -170,17 +161,20 @@
                     })
             };
 
+            // При прокрутке подгружаем данные
             $scope.loadMore = function() {
-
+                // Если следущей страницы нет, ничего не грузим
                 if (!nextPage){
-                    return
+                    return;
                 }
+                // Ждем пока не загрузим предыдущюю страницу
                 if(readyGetNextPage) {
                     readyGetNextPage = false;
                     $scope.getRequests('page');
                 }
             };
 
+            // Получаем заявки
             $scope.getRequests = function(changed){
                 $http.get('{% url 'api_request_list' %}', {params: getParams(changed)})
                     .success(function(data, status, headers, config) {
@@ -190,15 +184,14 @@
                     });
             };
 
-            $scope.edit = function(request){
-                requestFactory.request = request;
-            };
-
+            // Переходим к редактированию заявки.
             $scope.requestEdit = function(id){
-                requestFactory.requestId = id;
+                // Сохраняем id редактируемой заметки
+                editedRequest.id = id;
                 $scope.redirect(pages.requestDetail);
             };
 
+            // Разукрашиваем строки таблицы.
             $scope.rowClass = function(request){
                 if(request.out_number){
 {#                    return 'bg-success';#}
@@ -222,7 +215,11 @@
 
 
 //--------------------  Контроллер формы Создания/редактирования заявки --------------------
-        app.controller('RequestFormCtrl', function($scope, $http, $routeParams, $cookies, requestFactory, pages, getErrorMessage){
+        app.controller('RequestFormCtrl', function($scope, $http, editedRequest, pages, getErrorMessage){
+            // Получаем id заявки для редактирования
+            var id = editedRequest.id;
+            editedRequest.id = null;
+            // При переходе с редактируемой на создаваемую, очищаем форму
             $scope.$on('clearForm', function(){
                 $scope.request = null;
             });
@@ -243,21 +240,19 @@
                             data : data
                         };
                     })
-            }
+            };
 
-            // Получаем id заявки для редактирования
-            var id = requestFactory.requestId;
-            requestFactory.requestId = null;
             if(id){
-                // Получаем данные заявки
+                // Получаем данные заявки для редактирования
                 $http.get('{% url 'api_request_list' %}/'+ id +'/')
                     .success(function(data) {
                         $scope.request = data;
                         getPerformerList();
                     });
             }
-            else{                // Устанавливаем сегодняшнюю входящую дату для новой заявки
+            else{
                 getPerformerList();
+                // Устанавливаем сегодняшнюю входящую дату для новой заявки
                 var today = new Date();
                 var day = today.getDate();
                 var month = today.getMonth() + 1;
@@ -269,50 +264,31 @@
             $scope.saveRequest = function(data, form) {
                 if (form.$valid) {
                     $scope.error = undefined;
+                    var req = {
+                        method : 'POST',
+                        url : '{% url 'api_request_list' %}'
+                    };
                     if ($scope.request.id){
-                        // Edit request
-                        // заменяем объект исполнителя на id исполнителя
-                        if (data.out_number == ''){
-                            data.out_number = null;
-                        }
-                        data = JSON.stringify(data);
-                        data = JSON.parse(data);
-                        data.performer = data.performer.id
-                        $http.put('{% url 'api_request_list' %}/'+ $scope.request.id +'/', data)
-                            .success(function(data, status, headers, config){
-                                $scope.redirect(pages.requestList);
-                            })
-                            .error(function(data, status, headers, config ){
-                                $scope.error = getErrorMessage(data, status, headers, config);
-{#                                $scope.error = {#}
-{#                                    status : status,#}
-{#                                    headers :headers,#}
-{#                                    config : config,#}
-{#                                    data : data#}
-{#                                };#}
-                            })
+                        req.method = 'PUT';
+                        req.url = '{% url 'api_request_list' %}/'+ $scope.request.id +'/';
                     }
-                    else{
-                        // Create request
-                        $scope.formData = data;
-                        data.performer = data.performer.id
-                        $http.post('{% url 'api_request_list' %}', data)
-                            .success(function(data, status, headers, config){
-                                $scope.redirect(pages.requestList);
-                            })
-                            .error(function(data, status, headers, config ){
-                                $scope.error = getErrorMessage(data, status, headers, config);
-{#                                $scope.error = {#}
-{#                                    status : status,#}
-{#                                    headers :headers,#}
-{#                                    config : config,#}
-{#                                    data : data#}
-{#                                };#}
-                            })
+                    if (data.out_number == ''){
+                        data.out_number = null;
                     }
+                    data = JSON.stringify(data);
+                    data = JSON.parse(data);
+                    data.performer = data.performer.id;
+                    req.data = data;
+                    $http(req)
+                        .success(function(data, status, headers, config){
+                            $scope.redirect(pages.requestList);
+                        })
+                        .error(function(data, status, headers, config ){
+                            $scope.error = getErrorMessage(data, status, headers, config);
+                        });
                 }
                 else {
-                    $scope.error = 'Ошибка при заполнении полей'
+                    $scope.error = 'Ошибка при заполнении полей';
                 }
             };
 
@@ -327,26 +303,12 @@
 
 
 //-------------------- Контроллер исполнителей --------------------
-        app.controller('PerformerCtrl', function($scope, $http, pages){
-            $scope.test = 'test test test test'
+        app.controller('PerformerCtrl', function($scope, $http){
             $scope.save = function(data, form){
                 if (form.$valid){
                     $http.post('{% url 'api_performer_list' %}', {"name": data})
-                        .success(function(data){
-                            alert(data)
-                        })
-                        .error(function(){
-                            alert('error')
-                        });
-                }
-            }
-
-            $scope.items = [];
-            var counter = 0;
-            $scope.loadMore = function() {
-                for (var i = 0; i < 10; i++) {
-                    $scope.items.push({id: counter});
-                    counter += 10;
+                        .success(function(data){})
+                        .error(function(){});
                 }
             };
         });
