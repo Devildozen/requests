@@ -1,5 +1,5 @@
 {% verbatim %}
-    <div ng-controller="RequestFormCtrl" class="container center-block">
+    <div ng-controller="RequestFormCtrl" class="requestForm container center-block">
 <!--
         {{ request }}<br/>
         {{ request.in_number }}<br/>
@@ -31,7 +31,7 @@
             </div>
 
             <div class="form-group col-md-2 col-md-offset-8">
-                <lable for="in_number">№ входящий:</lable>
+                <lable for="in_number" class="glyphicon" >№ входящий:</lable>
                 <input ng-model="request.in_number" class="form-control" id="in_number" ng-pattern="/^\d+$/" required placeholder="Входящий номер заявки" />
             </div>
 
@@ -52,9 +52,10 @@
                 {{ request.performer}}<br/>
                 {{ performers[4] }}<br/>
                 <select ng-init="getPerformerList()" ng-model="request.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
-                -->
-                <lable for="performer" class="glyphicon glyphicon-user"> Исполнитель:</lable>
                 <select ng-model="request.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
+                -->
+                <lable for="performer" class="glyphicon glyphicon-user">Исполнитель:</lable>
+                <select ng-model="selectedPerformer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
             </div>
 
             <div class="form-group col-md-2 col-md-offset-8">
@@ -63,7 +64,7 @@
             </div>
 
             <div ng-if="request.id" class="form-group col-md-2 col-md-offset-10">
-                <lable for="out_number">№ исходящий:</lable>
+                <lable for="out_number" class="glyphicon">№ исходящий:</lable>
                 <input ng-model="request.out_number" class="form-control" id="out_number" ng-pattern="/^\d+$/" placeholder="Номер исходящий" />
             </div>
 

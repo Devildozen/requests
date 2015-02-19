@@ -45,6 +45,7 @@
         app.factory('pages', function(){
             return {
                 requestList : 'requestTable',
+{#                requestList : 'qqq',#}
                 requestDetail : 'requestForm',
                 performers : 'performerForm'
             }
@@ -57,7 +58,6 @@
                 return data;
             }
         });
-
 
 {#        app.config($locationProvider.html5Mode(true));#}
 {#        app.config(['$locationProvider', function($locationProvider) {#}
@@ -100,7 +100,12 @@
                 $scope.virtualPage = pages.requestDetail;
                 // При переходе с редактируемой заметки на создание новой, очищаем форму
                 $scope.$broadcast('clearForm');
-            }
+            };
+
+            $scope.testModelChange = function(){
+                alert($scope.testModel)
+            };
+
         });
 
 
@@ -222,6 +227,7 @@
             // При переходе с редактируемой на создаваемую, очищаем форму
             $scope.$on('clearForm', function(){
                 $scope.request = null;
+                $scope.selectedPerformer = null;
             });
 
             // Получаем JSON с исполнителями
@@ -230,7 +236,8 @@
                     .success(function(data, status, headers, config) {
                         $scope.performers = data;
                         // Инициализация исполнителя в выподающем списке
-                        $scope.request.performer = getPerformer($scope.request.performer, $scope.performers);
+                        $scope.selectedPerformer = getPerformer($scope.request.performer, $scope.performers);
+{#                        $scope.request.performer = getPerformer($scope.request.performer, $scope.performers);#}
                     })
                     .error(function(data, status, headers, config ){
                         $scope.error = {
@@ -275,9 +282,7 @@
                     if (data.out_number == ''){
                         data.out_number = null;
                     }
-                    data = JSON.stringify(data);
-                    data = JSON.parse(data);
-                    data.performer = data.performer.id;
+                    data.performer = $scope.selectedPerformer.id
                     req.data = data;
                     $http(req)
                         .success(function(data, status, headers, config){
@@ -300,7 +305,6 @@
                 }
             };
         });
-
 
 //-------------------- Контроллер исполнителей --------------------
         app.controller('PerformerCtrl', function($scope, $http){
@@ -328,6 +332,7 @@
                     <li ng-click="virtualPage = 'requestTable'"><a>Заявки</a></li>
                     <li ng-click="setRequestForm()"><a>Создать завку</a></li>
                     <li><a ng-click="virtualPage = 'performerForm'">Исполнители</a></li>
+                    <li class="divider-vertical"></li>
                     <li class=""><a href="{% url 'logout' %}" >Выйти</a></li>
                 </ul>
             </div>
@@ -367,6 +372,11 @@
                 </div>
             {% endverbatim %}
     {#        </script>    #}
+            </div>
+            <div ng-switch-when="qqq">
+{#                <div ng-controller="testCtrl">#}
+                    <input ng-model="testModel" ng-change="testModelChange()">
+{#                </div>#}
             </div>
         </div>
     {% endblock content %}

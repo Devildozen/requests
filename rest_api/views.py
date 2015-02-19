@@ -42,6 +42,7 @@ class RequestsFilter(django_filters.FilterSet):
     performer = django_filters.CharFilter(name='performer__name')
     applicant = django_filters.CharFilter(name='applicant',
                                           lookup_type='icontains')
+    # in_number = django_filters.MultipleChoiceFilter(name=['in_number', 'out_number'],lookup_type='icontains')
     in_number = django_filters.CharFilter(name='in_number',
                                           lookup_type='icontains')
     out_number = django_filters.CharFilter(name='out_number',

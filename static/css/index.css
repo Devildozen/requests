@@ -11,10 +11,21 @@
     background-color: #ffb39b;
 }
 
+.nav li {
+    cursor: pointer;
+}
+
 table {
     margin-top: 30px;
 }
+    table th{
+        cursor: pointer;
+    }
 
-label{
-    padding-top: -10px;
+    .editTitle {
+        cursor: default;
+    }
+
+.requestForm .form-control {
+    margin-top: 5px;
 }
