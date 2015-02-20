@@ -68,7 +68,10 @@
                 <input ng-model="request.out_number" class="form-control" id="out_number" ng-pattern="/^\d+$/" placeholder="Номер исходящий" />
             </div>
 
-            <input ng-click="saveRequest(request, RequestForm)" class="btn btn-sm btn-success active col-md-1 col-md-offset-1" type="submit" value="Сохранить"  />
+            <div class="col-md-5 row">
+                <input ng-click="redirect('requestTable')" class="btn btn-sm btn-primary active col-md-5" type="submit" value="Назад" />
+                <input ng-click="saveRequest(request, RequestForm)" class="btn btn-sm btn-success active col-md-5 col-md-offset-2" type="submit" value="Сохранить"  />
+            </div>
         </form>
     </div>
 {% endverbatim %}

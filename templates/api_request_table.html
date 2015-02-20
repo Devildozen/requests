@@ -70,7 +70,7 @@
                 <th class="col-md-1 editTitle" >Редактировать</th>
 
             </tr>
-            <tr ng-repeat="request in requests" ng-class="rowClass(request)">
+            <tr ng-dblclick="requestEdit(request.id)" ng-repeat="request in requests" ng-class="rowClass(request)">
                 <td class="col-md-1">{{ request.in_number }}</td>
                 <td class="col-md-1">{{ request.out_number}}</td>
                 <td class="col-md-4">{{ request.text }}</td>

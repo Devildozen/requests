@@ -1,10 +1,7 @@
 # -*- coding:utf-8 -*-
+
 # ? Спросить - валидация на сервере а ошибки генерирует рест, какое сообщение выводить юзеру.
-# Попробовать отднльную переменную для перформера в поле подстановки
-# Объединить изменение и создание заявки в ангуляре
 # Узнать как отлавливать неавторизованного юзера
-# Поле даты сделать пустым или сегодняшнюю
-# посмотреть Изменение номера заявки
 
 # from django.core.urlresolvers import reverse
 # from django.views.generic import ListView, CreateView
@@ -36,7 +33,7 @@ from rest_api.serializers import *
 #        'users': reverse('user-list', request=request),
 #        'groups': reverse('group-list', request=request),
 #     })
-ordering_reg = re.compile('^-?[a-zA-Zа-яА-ЯёЁ_]+$')
+ordering_regular = re.compile('^-?[a-zA-Zа-яА-ЯёЁ_]+$')
 
 class RequestsFilter(django_filters.FilterSet):
     performer = django_filters.CharFilter(name='performer__name')
@@ -93,18 +90,15 @@ class RequestsFilter(django_filters.FilterSet):
             'performer__name',
         )
 
-        # order_by = ['-id']
-
     def get_order_by(self, order_value):
         # return [self.data['ordering']]
-        if self.data.has_key('ordering'):
+        if 'ordering' in self.data:
             ordering = self.data['ordering']
-            if ordering_reg.match(ordering):
+            if ordering_regular.match(ordering):
                 if self.Meta.ordering_fields.count(ordering.replace('-', '')):
                     return [ordering]
-            if order_value:
-                return [order_value]
         return super(RequestsFilter, self).get_order_by(order_value)
+
 
 @api_view(['GET', 'POST'])
 def index(request):

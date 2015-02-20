@@ -102,7 +102,7 @@
                 $scope.$broadcast('clearForm');
             };
 
-            $scope.testModelChange = function(){
+            $scope.testModelChange = function(param){
                 alert($scope.testModel)
             };
 
@@ -228,6 +228,7 @@
             $scope.$on('clearForm', function(){
                 $scope.request = null;
                 $scope.selectedPerformer = null;
+                setToday();
             });
 
             // Получаем JSON с исполнителями
@@ -259,13 +260,9 @@
             }
             else{
                 getPerformerList();
+                setToday();
                 // Устанавливаем сегодняшнюю входящую дату для новой заявки
-                var today = new Date();
-                var day = today.getDate();
-                var month = today.getMonth() + 1;
-                var year = today.getFullYear();
-                var todayFormat =  year + '-' + (month > 10 ? '' : '0') + month + '-' + (day > 10 ? '' : '0') + day;
-                $scope.request = { filling_date : todayFormat };
+
             }
             // Создаем новую или редактируем старую заявку
             $scope.saveRequest = function(data, form) {
@@ -304,6 +301,15 @@
                     }
                 }
             };
+
+            function setToday(){
+                var today = new Date();
+                var day = today.getDate();
+                var month = today.getMonth() + 1;
+                var year = today.getFullYear();
+                var todayFormat =  year + '-' + (month > 10 ? '' : '0') + month + '-' + (day > 10 ? '' : '0') + day;
+                $scope.request = { filling_date : todayFormat };
+            }
         });
 
 //-------------------- Контроллер исполнителей --------------------
