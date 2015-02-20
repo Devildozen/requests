@@ -1,6 +1,7 @@
 {% verbatim %}
-    <div ng-controller="RequestFormCtrl" class="requestForm container center-block">
+    <div ng-controller="RequestFormCtrl" class="requestForm">
 <!--
+    <div ng-controller="RequestFormCtrl" class="requestForm container center-block">
         {{ request }}<br/>
         {{ request.in_number }}<br/>
         {{ request.out_number}}<br/>
@@ -44,7 +45,7 @@
                 <div>
                     <lable for="text">Текст:</lable>
                 </div>
-                <textarea ng-model="request.text" class="form-control " id="text" ></textarea>
+                <textarea ng-model="request.text" class="form-control" rows="10" id="text" ></textarea>
             </div>
 
             <div class="form-group col-md-2">
@@ -55,7 +56,7 @@
                 <select ng-model="request.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
                 -->
                 <lable for="performer" class="glyphicon glyphicon-user">Исполнитель:</lable>
-                <select ng-model="selectedPerformer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
+                <select ng-model="request.performer" ng-options="performer.id as performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
             </div>
 
             <div class="form-group col-md-2 col-md-offset-8">

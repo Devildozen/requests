@@ -1,0 +1,11 @@
+{% verbatim %}
+<div ng-controller="PerformerCtrl">
+    <form class="form-group form-inline" name="PerformerForm">
+        <div class="form-group">
+            <lable for="newPerformerName">Имя : </lable>
+            <input ng-model="newPerformerName" class="form-control" id="newPerformerName" maxlength="100" type="text" placeholder="Ф.И.О" />
+        </div>
+        <input ng-click="save(newPerformerName, PerformerForm)" class="btn btn-sm btn-success active" type="submit" value="Сохранить"  />
+    </form >
+</div>
+{% endverbatim %}

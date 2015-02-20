@@ -20,7 +20,7 @@
             </div>
             <div class="col-md-2">
                 <label for="fPerformer" class="glyphicon glyphicon-user">Исполнитель: </label>
-                <select ng-change="getRequests('filter')"  ng-init="getPerformerList()" ng-model="filters.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}
+                <select ng-change="getRequests('filter')"  ng-init="getPerformerList()" ng-model="filters.performer" ng-options="performer.name as performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}
                     <option value=" "><option>
                 </select>
             </div>

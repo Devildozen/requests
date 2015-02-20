@@ -3,9 +3,6 @@
 # ? Спросить - валидация на сервере а ошибки генерирует рест, какое сообщение выводить юзеру.
 # Узнать как отлавливать неавторизованного юзера
 
-# from django.core.urlresolvers import reverse
-# from django.views.generic import ListView, CreateView
-# from django.contrib.auth import authenticate, login, logout,
 import re
 
 from django.shortcuts import render
@@ -35,11 +32,11 @@ from rest_api.serializers import *
 #     })
 ordering_regular = re.compile('^-?[a-zA-Zа-яА-ЯёЁ_]+$')
 
+
 class RequestsFilter(django_filters.FilterSet):
     performer = django_filters.CharFilter(name='performer__name')
     applicant = django_filters.CharFilter(name='applicant',
                                           lookup_type='icontains')
-    # in_number = django_filters.MultipleChoiceFilter(name=['in_number', 'out_number'],lookup_type='icontains')
     in_number = django_filters.CharFilter(name='in_number',
                                           lookup_type='icontains')
     out_number = django_filters.CharFilter(name='out_number',
@@ -123,7 +120,6 @@ def performer_list(request):
 
 
 class PerformerDetail(APIView):
-
     def get_objects(self, id):
         try:
             return Performers.objects.get(pk=id)
