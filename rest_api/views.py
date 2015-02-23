@@ -10,7 +10,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 import django_filters
 from django.conf import settings
-# from django.contrib.auth.models import User, Group
+
 
 from rest_framework import generics, status, permissions
 from rest_framework.decorators import api_view

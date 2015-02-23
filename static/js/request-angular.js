@@ -13,7 +13,6 @@ angular.module("myApp").factory('editedRequest', function(){
     };
 });
 
-
 angular.module("myApp").factory('urls', function(){
     return {
         api_request_list : '/api/request_list',
@@ -41,8 +40,6 @@ angular.module("myApp").factory('getErrorMessage', function(){
         return data;
     }
 });
-
-
 
 
 //-------------------- Общий контроллер + навигация --------------------
@@ -255,6 +252,7 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
         $scope.request = { filling_date : todayFormat };
     }
 });
+
 
 //-------------------- Контроллер исполнителей --------------------
 angular.module("myApp").controller('PerformerCtrl', function($scope, $http, getErrorMessage, urls){
