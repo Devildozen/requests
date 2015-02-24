@@ -21,9 +21,7 @@ class PermissionsCase(APITestCase):
 
         self.username = 'user'
         self.password = 'secret'
-        self.user = User.objects.create_user(self.username,
-                                             'mail@example.com',
-                                             self.password)
+        self.user = User.objects.create_user(self.username, 'mail@example.com', self.password)
 
     def test_not_authorized_user(self):
         response = self.client.get('/api/performers/')
@@ -43,9 +41,7 @@ class PerformersAPITestCase(APITestCase):
 
         self.username = 'user'
         self.password = 'secret'
-        self.user = User.objects.create_user(self.username,
-                                             'mail@example.com',
-                                             self.password)
+        self.user = User.objects.create_user(self.username, 'mail@example.com', self.password)
         Performers.objects.create(name='Nick')
         self.client.force_authenticate(user=self.user)
 
@@ -80,9 +76,7 @@ class RequestAPITestCase(APITestCase):
 
         self.username = 'user'
         self.password = 'secret'
-        self.user = User.objects.create_user(self.username,
-                                             'mail@example.com',
-                                             self.password)
+        self.user = User.objects.create_user(self.username, 'mail@example.com', self.password)
         self.client.force_authenticate(user=self.user)
 
         Performers.objects.create(name='Alex')
@@ -148,15 +142,13 @@ class RequestAPITestCase(APITestCase):
         self.assertDictContainsSubset({'out_number': ['This field must be unique.']}, response.data)
 
 
-class RequestOrderingTestCase(APITestCase):
+class RequestFilterOrderingTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
 
         self.username = 'user'
         self.password = 'secret'
-        self.user = User.objects.create_user(self.username,
-                                             'mail@example.com',
-                                             self.password)
+        self.user = User.objects.create_user(self.username, 'mail@example.com', self.password)
         self.client.force_authenticate(user=self.user)
 
         Performers.objects.create(name='Alex')
@@ -172,7 +164,17 @@ class RequestOrderingTestCase(APITestCase):
                 applicant='Applicant-' + r(),
                 performer=Performers.objects.get(id=i % 2 + 1)
             )
+        self.filter_fields = [
+            'in_number',
+            'out_number',
+            'text',
+            'filling_date',
+            'performance_date',
+            'applicant',
+            'performer',
+        ]
         self.ordering_fields = (
+            'id',
             'in_number',
             'out_number',
             'filling_date',
@@ -180,6 +182,7 @@ class RequestOrderingTestCase(APITestCase):
             'text',
             'applicant',
             'performer__name',
+            '-id',
             '-in_number',
             '-out_number',
             '-filling_date',
@@ -196,6 +199,25 @@ class RequestOrderingTestCase(APITestCase):
             for i in range(len(query)):
                 self.assertEqual(query[i].id, response.data['results'][i]['id'])
 
-
-class RequestFiltersTestCase(APITestCase):
-    pass
+    def test_filtering(self):
+        for field in self.filter_fields:
+            request = Requests.objects.get(
+                id=random.randint(1, len(Requests.objects.all()))
+            )
+            values = {
+                'in_number': request.in_number,
+                'out_number': request.out_number,
+                'text': request.text,
+                'filling_date': request.filling_date,
+                'performance_date': request.performance_date,
+                'applicant': request.applicant,
+                'performer': request.performer,
+            }
+            query = Requests.objects.all().filter(**{field: values[field]})
+            response = self.client.get('/api/request_list?' + field + '=' + str(values[field]))
+            self.assertEqual(len(query), len(response.data['results']))
+            query_id = []
+            for q in query:
+                query_id.append(q.id)
+            for rec in response.data['results']:
+                self.assertIn(rec['id'], query_id)
