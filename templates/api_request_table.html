@@ -26,7 +26,7 @@
             </div>
             <div class="col-md-2" >
                 <label for="fInDate" class="glyphicon glyphicon-calendar">Дата подачи: </label>
-                <input ng-change="getRequests('filter')"  ng-model="filters.filling_date" type="date" id="fInDate" class="form-control">
+                <input ng-change="getRequests('filter')"  ng-model="filters.filling_date" id="fInDate" class="form-control">
             </div>
             <div class="col-md-2">
                 <label for="fOutDate" class="glyphicon glyphicon-calendar">Cрок исполнения: </label>
@@ -85,7 +85,7 @@
                     <a ng-click="edit(request)" href="#/requests/form/{{ request.in_number }}">Редактировать</a>
                     <a ng-click="requestEdit(request.id)" href="#/requests/form/{{ request.id }}">Редактировать</a>
                     -->
-                    <button ng-click="requestEdit(request.id)" class="btn btn-xs btn-primary">Редактировать</button>
+                    <button ng-click="requestEdit(request.id)" class="btn btn-xs btn-default glyphicon glyphicon-edit"></button>
                     <!--a href="{% url 'request_form' %}?type=edit&in_num={{ request.in_number }}">Редактировать</a-->
                 </td>
             </tr>
