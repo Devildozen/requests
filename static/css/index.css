@@ -25,3 +25,10 @@ table {
 .requestForm .form-control {
     margin-top: 5px;
 }
+
+.ng-invalid.ng-dirty{
+  border-color: #f27d7d;
+}
+.ng-valid.ng-dirty{
+  border-color: #88e26a;
+}

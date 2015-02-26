@@ -101,7 +101,8 @@ function getNormalDate(date){
 
 //-------------------- Общий контроллер + навигация --------------------
 angular.module("myApp").controller('BodyCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls) {
-    $scope.virtualPage = pages.requestList;
+    $scope.virtualPage = pages.requestDetail;
+    //$scope.virtualPage = pages.requestList;
 
     $scope.redirect = function(page){
         $scope.virtualPage = page;
@@ -256,8 +257,11 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
     // При переходе с редактируемой на создаваемую, очищаем форму
     $scope.$on('clearForm', function(){
         $scope.request = null;
+        $scope.error = null;
         $scope.selectedPerformer = null;
+
         setDates();
+
     });
 
     // Получаем JSON с исполнителями
