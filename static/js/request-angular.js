@@ -1,7 +1,6 @@
-angular.module("myApp", ['ngRoute', 'ngCookies', 'infinite-scroll']);
+angular.module("myApp", ['ngRoute', 'ngCookies', 'infinite-scroll', 'ui.bootstrap']);
 
-angular.module("myApp").run(['$http','$cookies', function($http, $cookies)
-{
+angular.module("myApp").run(['$http','$cookies', function($http, $cookies){
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $http.defaults.headers.put['X-CSRFToken'] = $cookies.csrftoken;
 }]);
@@ -42,6 +41,64 @@ angular.module("myApp").factory('getErrorMessage', function(){
 });
 
 
+function getNormalDate(date){
+    try {
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
+        var todayFormat = year + '-' + (month > 9 ? '' : '0') + month + '-' + (day > 9 ? '' : '0') + day;
+        return todayFormat
+    }
+    catch(ex) {
+        return date
+    }
+    //return angular.$filter('date')(date,'yyyy-MM-dd');
+    //return date.substring(0, date.indexOf('T'))
+}
+
+
+//angular.module("myApp").directive('myNormalDate',function(){
+//    return function (scope, element, attrs) {
+//        element.on('$change', al);
+        //element.on('click', al);
+
+        //element.bind('$change', function(){
+        //    alert('clk')
+        //});
+        //function al(){
+        //    alert('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+        //}
+        //var date = scope[attrs["ngModel"]];
+        //scope[attrs["ngModel"]] = getNormalDate(date)
+        //$element.on('change', function(){
+        //    alert('date chage')
+        //});
+        //if (angular.isArray(data.answers)) {
+        //    var ulElem = angular.element("<ul>");
+        //    element.append(ulElem);
+        //    for (var i = 0; i < data.answers.length; i++) {
+        //        var liElem = angular.element('<li>');
+        //        liElem.append(angular.element('<p>').text(data.answers[i].text));
+        //        ulElem.append(liElem);
+        //    }
+        //}
+//    }
+//});
+
+
+//angular.module("myApp").directive('datee',function(){
+//    return function($scope,$element) {
+//
+//        $element.on('change',function() {
+//            //    $element.datepicker();
+//            alert('datepicker')
+//        });
+//        //$element.children().hide();
+//        //       $(this).children().toggle();
+//    }
+//});
+
+
 //-------------------- Общий контроллер + навигация --------------------
 angular.module("myApp").controller('BodyCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls) {
     $scope.virtualPage = pages.requestList;
@@ -73,8 +130,22 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
     var getParams = function(changed) {
         var params = {};
         if ($scope.filters) {
+            //if($scope.filters.filling_date){
+            //    $scope.filters.filling_date = getNormalDate($scope.filters.filling_date)
+            //}
+            for (var filter in $scope.filters){
+                if ($scope.filters[filter] == ''){
+                    $scope.filters[filter] = null;
+                }
+            }
             params = JSON.stringify($scope.filters);
             params = JSON.parse(params);
+            if(params.filling_date){
+                params.filling_date = getNormalDate($scope.filters.filling_date)
+            }
+            if(params.performance_date){
+                params.performance_date = getNormalDate($scope.filters.performance_date)
+            }
         }
         // добавляем сортировку
         if (ordering){
@@ -170,6 +241,10 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
         }
     };
     $scope.getRequests();
+
+    //$scope.showDatepicker = function(){
+    //    $( "#fInDate" ).datepicker();
+    //}
 });
 
 
@@ -182,7 +257,7 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
     $scope.$on('clearForm', function(){
         $scope.request = null;
         $scope.selectedPerformer = null;
-        setToday();
+        setDates();
     });
 
     // Получаем JSON с исполнителями
@@ -210,7 +285,8 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
     else{
         getPerformerList();
         // Устанавливаем сегодняшнюю входящую дату для новой заявки
-        setToday();
+        setDates();
+        //setNextWeek();
     }
     // Создаем новую или редактируем старую заявку
     $scope.saveRequest = function(data, form) {
@@ -224,6 +300,8 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
                 req.method = 'PUT';
                 req.url = urls.api_request_list + '/'+ $scope.request.id +'/';
             }
+            data.filling_date = getNormalDate(data.filling_date);
+            data.performance_date = getNormalDate(data.performance_date);
             if (data.out_number == ''){
                 data.out_number = null;
             }
@@ -243,13 +321,20 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
     };
 
 
-    function setToday(){
-        var today = new Date();
-        var day = today.getDate();
-        var month = today.getMonth() + 1;
-        var year = today.getFullYear();
-        var todayFormat =  year + '-' + (month > 10 ? '' : '0') + month + '-' + (day > 10 ? '' : '0') + day;
-        $scope.request = { filling_date : todayFormat };
+    function setDates(){
+        //var today = new Date();
+        //var day = today.getDate();
+        //var month = today.getMonth() + 1;
+        //var year = today.getFullYear();
+        //var todayFormat =  year + '-' + (month > 10 ? '' : '0') + month + '-' + (day > 10 ? '' : '0') + day;
+        //$scope.request = { filling_date : todayFormat };
+        var week = 604800000;
+        if (!$scope.request){
+            $scope.request = {}
+        }
+        $scope.request.filling_date = getNormalDate(new Date());
+        $scope.request.performance_date = getNormalDate(new Date(new Date().valueOf()+week));
+
     }
 });
 

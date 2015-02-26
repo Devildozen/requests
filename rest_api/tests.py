@@ -219,27 +219,27 @@ class RequestFilterOrderingTestCase(APITestCase):
 
     def test_filtering(self):
         for field in self.filter_fields:
-            query = Requests.objects.select_related('performer').get(id=1)#.values()
-            values = query.__dict__[field]
-            # query = Requests.objects.get(
-            #     id=random.randint(1, Requests.objects.all().count())
-            # ).values()
-            # values = {
-            #     'in_number': query.in_number,
-            #     'out_number': query.out_number,
-            #     'text': query.text,
-            #     'filling_date': query.filling_date,
-            #     'performance_date': query.performance_date,
-            #     'applicant': query.applicant,
-            #     'performer': query.performer,
-            # }
+            # query = Requests.objects.select_related('performer').get(id=1)#.values()
+            # values = query.__dict__[field]
+            query = Requests.objects.get(
+                id=random.randint(1, Requests.objects.all().count())
+            )
+            values = {
+                'in_number': query.in_number,
+                'out_number': query.out_number,
+                'text': query.text,
+                'filling_date': query.filling_date,
+                'performance_date': query.performance_date,
+                'applicant': query.applicant,
+                'performer': query.performer,
+            }
             query = (Requests.objects.all().
-                     filter(**{field: values}).
-                     # filter(**{field: values[field]}).
+                     # filter(**{field: values}).
+                     filter(**{field: values[field]}).
                      values_list('id', flat=True))
             response = self.client.get('%s?%s=%s' %
-                                       (Urls.request_list, field, values))
-                                       # (Urls.request_list, field, values[field]))
+                                       # (Urls.request_list, field, values))
+                                       (Urls.request_list, field, values[field]))
             self.assertEqual(len(query), len(response.data['results']))
             for rec in response.data['results']:
                 self.assertIn(rec['id'], query)
