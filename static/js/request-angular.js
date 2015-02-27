@@ -72,16 +72,7 @@ angular.module("myApp").directive('unique', ['$http', function($http) {
             //console.log(constructor);
             scope.$watch(attrs.ngModel, function() {
                 var params = attrs.unique.split('.');
-                //console.log('----------------------------------------');
-                //console.log(currentValue);
-                //console.log(params[0]);
-                //console.log(params[1]);
-                //console.log(params[2]);
-                //console.log(scope);
-                //console.log(scope.RequestForm.in_number.$modelValue);
-                //console.log(attrs);
-                //console.log(ele);
-                //console.log(constructor);
+                
                 alert(constructor.$modelValue)
                 console.log(constructor.$modelValue)
                 var req = {
