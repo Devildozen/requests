@@ -24,7 +24,7 @@ from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 import django_filters
-from django.conf import settings
+# from django.conf import settings
 
 
 from rest_framework import generics, status, permissions
@@ -32,14 +32,12 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 # from rest_framework.reverse import reverse
 from rest_framework.response import Response
-from rest_framework.filters import OrderingFilter
-# from rest_framework.permissions import IsAuthenticated
+# from rest_framework.filters import OrderingFilter
 
 
-
-
-# from request_form.models import *
 from rest_api.serializers import *
+from rest_api.forms import *
+from django.contrib.auth import authenticate, login, logout
 
 # @api_view(['GET'])
 # def api(request, format=None):
@@ -113,6 +111,37 @@ class RequestsFilter(django_filters.FilterSet):
                 if self.Meta.ordering_fields.count(ordering.replace('-', '')):
                     return [ordering]
         return super(RequestsFilter, self).get_order_by(order_value)
+
+
+def my_login(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('requests'))
+    template_context = {}
+    if request.method != 'POST':
+        form = LoginForm()
+    else:
+        form = LoginForm(request.POST)
+
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect(reverse('index'))
+        else:
+            template_context['error'] = 'Неправильный логин или пароль'
+
+    template_context['form'] = form
+    return render(request, 'login.html',  template_context)
+
+
+def my_logout(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('login'))
+    logout(request)
+    return HttpResponseRedirect(reverse('login'))
 
 
 @api_view(['GET', 'POST'])
@@ -259,3 +288,11 @@ class CheckExist(APIView):
     permission_classes = [
         permissions.IsAuthenticated
     ]
+
+
+def show_db(request):
+    template_context = {}
+    template_context['Requests'] = Requests.objects.all()
+    template_context['Performers'] = Performers.objects.all()
+    # template_context['RequestHistory'] = RequestHistory.objects.all()
+    return render(request, 'db.html',  template_context)

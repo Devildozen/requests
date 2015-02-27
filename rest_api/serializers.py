@@ -1,9 +1,10 @@
 # -*- coding:utf-8 -*-
+
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 # from rest_api.serializers import *
-from request_form.models import Performers, Requests
+from rest_api.models import Performers, Requests
 
 
 class PerformerRequests(serializers.RelatedField):

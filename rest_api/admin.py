@@ -1,3 +1,5 @@
 from django.contrib import admin
+from rest_api.models import Requests, Performers
 
-# Register your models here.
+admin.site.register(Requests)
+admin.site.register(Performers)

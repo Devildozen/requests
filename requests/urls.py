@@ -2,9 +2,10 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-import request_form.views
 import rest_api.views
 import rest_api.serializers
+
+import rest_api.views
 
 rest_api_urls = patterns('',
     # url(r'^index/$',
@@ -57,19 +58,19 @@ urlpatterns = patterns('',
         rest_api.views.index,
         name='index'),
     url(r'^db/',
-        'request_form.views.show_db',
+        'rest_api.views.show_db',
         name='db'),
-    url(r'^requests/$',
-        'request_form.views.requests',
-        name='requests'),
-    url(r'^requestForm/',
-        request_form.views.request_form,
-        name='request_form'),
+    # url(r'^requests/$',
+    #     'request_form.views.requests',
+    #     name='requests'),
+    # url(r'^requestForm/',
+    #     request_form.views.request_form,
+    #     name='request_form'),
     url(r'^login/$',
-        'request_form.views.my_login',
+        'rest_api.views.my_login',
         name='login'),
     url(r'^logout/$',
-        'request_form.views.my_logout',
+        'rest_api.views.my_logout',
         name='logout'),
 
     # url(r'^api-auth/',

@@ -7,7 +7,7 @@ import random
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
-from request_form.models import Performers, Requests
+from rest_api.models import Performers, Requests
 from django.contrib.auth.models import User
 
 

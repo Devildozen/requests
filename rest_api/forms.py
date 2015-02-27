@@ -5,7 +5,7 @@ from django import forms
 # from django.forms import widgets
 from django.forms.extras.widgets import SelectDateWidget
 
-from request_form.models import *
+from rest_api.models import *
 
 
 class MyModelForm(forms.ModelForm):
