@@ -56,24 +56,57 @@ function getNormalDate(date){
     //return date.substring(0, date.indexOf('T'))
 }
 
-//app.directive('ensureUnique', ['$http', function($http) {
-//  return {
-//    require: 'ngModel',
-//    link: function(scope, ele, attrs, c) {
-//      scope.$watch(attrs.ngModel, function() {
-//        $http({
-//          method: 'POST',
-//          url: '/api/check/' + attrs.ensureUnique,
-//          data: {'field': attrs.ensureUnique}
-//        }).success(function(data, status, headers, cfg) {
-//          c.$setValidity('unique', data.isUnique);
-//        }).error(function(data, status, headers, cfg) {
-//          c.$setValidity('unique', false);
-//        });
-//      });
-//    }
-//  }
-//}]);
+angular.module("myApp").directive('unique', ['$http', function($http) {
+    return {
+        require: 'ngModel',
+        //compile: function CompilingFunction($templateElement, $templateAttributes) {
+        //    return function LinkingFunction($scope, $linkElement, $linkAttributes, $constructor) {
+        //        alert($constructor.$modelValue);
+        //        //console.log($constructor);
+        //        //console.log($scope.RequestForm.in_number)//.$modelValue);
+        //    }
+        //},
+        link: function(scope, ele, attrs, constructor) {
+            //var currentValue = constructor.$modelValue;
+            //alert(constructor.$modelValue)
+            //console.log(constructor);
+
+            scope.$watch(attrs.ngModel, function() {
+                var params = attrs.unique.split('.');
+                //console.log('----------------------------------------');
+                //console.log(currentValue);
+                //console.log(params[0]);
+                //console.log(params[1]);
+                //console.log(params[2]);
+                //console.log(scope);
+                //console.log(scope.RequestForm.in_number.$modelValue);
+                //console.log(attrs);
+                //console.log(ele);
+                //console.log(constructor);
+                //alert(constructor.$modelValue)
+                //console.log(constructor.$modelValue)
+                var req = {
+                    method: 'POST',
+                    url: '/api/check/',
+                    data: {
+                        model: params[0],
+                        field: params[1],
+                        value: constructor.$modelValue
+                    }
+                };
+                //console.log(req);
+                $http(req)
+                .success(function(data, status, headers, cfg) {
+                    //console.log(data);
+                    //console.log(data.result);
+                    constructor.$setValidity('unique', !data.result);
+                })
+                .error(function(data, status, headers, cfg) {
+                });
+            });
+        }
+    }
+}]);
 
 //angular.module("myApp").directive('myNormalDate',function(){
 //    return function (scope, element, attrs) {
