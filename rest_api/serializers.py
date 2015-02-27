@@ -88,3 +88,16 @@ class RequestSerializer(serializers.ModelSerializer):
 
 class RequestGetSerializer(RequestSerializer):
     performer = PerformerSerializer()
+
+# class RequestCheckSerializer(RequestSerializer):
+#     class Meta:
+#         fields = (
+#             'in_number',
+#             'out_number',
+#         )
+# class PerformerCheckSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Performers
+#         fields = (
+#             'name',
+#         )

@@ -36,6 +36,8 @@ from rest_framework.filters import OrderingFilter
 # from rest_framework.permissions import IsAuthenticated
 
 
+
+
 # from request_form.models import *
 from rest_api.serializers import *
 
@@ -72,6 +74,7 @@ class RequestsFilter(django_filters.FilterSet):
                                           lookup_type='month')
     out_day = django_filters.CharFilter(name='performance_date',
                                         lookup_type='day')
+
 
     class Meta:
         model = Requests
@@ -224,3 +227,35 @@ class PerformerRequestList(generics.ListAPIView):
     def get_queryset(self):
         queryset = super(PerformerRequestList, self).get_queryset()
         return queryset.filter(performer=self.kwargs.get('id'))
+
+
+class CheckExist(APIView):
+    def post(self, request):
+        result = None
+        models = {
+            'requests': Requests,
+            'performers': Performers,
+        }
+        if 'model' in request.data:
+            model = request.data['model']
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if model in models:
+            try:
+                query = models[model].objects.get(
+                    **{request.data['field']: request.data['value']})
+                if query:
+                    result = True
+            except models[model].DoesNotExist:
+                # print(Exception)
+                result = False
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        #     return Response(serializer.data)
+        return Response({'result': result}, status=status.HTTP_200_OK)
+
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]

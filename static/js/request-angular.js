@@ -56,6 +56,24 @@ function getNormalDate(date){
     //return date.substring(0, date.indexOf('T'))
 }
 
+//app.directive('ensureUnique', ['$http', function($http) {
+//  return {
+//    require: 'ngModel',
+//    link: function(scope, ele, attrs, c) {
+//      scope.$watch(attrs.ngModel, function() {
+//        $http({
+//          method: 'POST',
+//          url: '/api/check/' + attrs.ensureUnique,
+//          data: {'field': attrs.ensureUnique}
+//        }).success(function(data, status, headers, cfg) {
+//          c.$setValidity('unique', data.isUnique);
+//        }).error(function(data, status, headers, cfg) {
+//          c.$setValidity('unique', false);
+//        });
+//      });
+//    }
+//  }
+//}]);
 
 //angular.module("myApp").directive('myNormalDate',function(){
 //    return function (scope, element, attrs) {
@@ -86,17 +104,21 @@ function getNormalDate(date){
 //});
 
 
-//angular.module("myApp").directive('datee',function(){
-//    return function($scope,$element) {
-//
-//        $element.on('change',function() {
-//            //    $element.datepicker();
-//            alert('datepicker')
-//        });
-//        //$element.children().hide();
-//        //       $(this).children().toggle();
-//    }
-//});
+angular.module("myApp").directive('myTest',function(){
+    return {
+        require: 'ngModel',
+        link: function(scope, ele, attrs, c) {
+            //return function(scope, element) {
+            //$element.on('change',function() {
+            scope.$watch(attrs.ngModel, function () {
+                //    $element.datepicker();
+                alert('test dirrective')
+            });
+            //$element.children().hide();
+            //       $(this).children().toggle();
+        }
+    }
+});
 
 
 //-------------------- Общий контроллер + навигация --------------------

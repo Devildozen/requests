@@ -27,9 +27,9 @@
         </div>
         <form class="form-group row" name="RequestForm" >
             <div class="form-group col-md-2">
-                <!--span ng-show="RequestForm.applicant.$error.required">Заполните это поле</span-->
                 <lable for="applicant" class="glyphicon glyphicon-user"> Заявитель:</lable>
                 <input ng-model="request.applicant" class="form-control" id="applicant" maxlength="100" type="text" name="applicant" required placeholder="Заявитель" />
+                <span ng-show="RequestForm.applicant.$invalid && RequestForm.applicant.$dirty" class="text-danger">Это обязательное поле</span>
             </div>
 
             <div class="form-group col-md-2 col-md-offset-8">
@@ -37,13 +37,16 @@
                 <!--span ng-show="RequestForm.in_number.$error.invalid">Заполните это поле</span-->
                 <lable for="in_number" class="glyphicon" >№ входящий:</lable>
                 <input ng-model="request.in_number" class="form-control" id="in_number" ng-pattern="/^\d+$/" name="in_number" required placeholder="Входящий номер заявки" />
+                <span ng-show="RequestForm.in_number.$error.required && RequestForm.in_number.$dirty" class="text-danger">Это обязательное поле</span>
+                <span ng-show="RequestForm.in_number.$error.pattern && RequestForm.in_number.$dirty" class="text-danger">Это числовое поле</span>
             </div>
 
             <div class="form-group col-md-2 col-md-offset-10">
                 <lable for="filling_date" class="glyphicon glyphicon-calendar">Дата подачи:</lable>
                 <!--input ng-model="request.filling_date" class="form-control" id="filling_date" type="date" required  /-->
                 <input ng-model="request.filling_date"  ng-click="open_in_date=true" datepicker-popup="dd-MM-yyyy"
-                     is-open="open_in_date" close-text="Close" class="form-control" id="filling_date" required />
+                     is-open="open_in_date" close-text="Close" class="form-control" id="filling_date" name="filling_date" required />
+                <span ng-show="RequestForm.filling_date.$error.required && RequestForm.filling_date.$dirty" class="text-danger">Введите дату</span>
             </div>
 
             <div class="form-group col-md-12">
@@ -68,7 +71,8 @@
                 <lable for="performance_date" class="glyphicon glyphicon-calendar">Срок исполнения:</lable>
                 <!--input ng-model="request.performance_date" class="form-control" id="performance_date" type="date" required /-->
                 <input ng-model="request.performance_date"  ng-click="open_out_date=true" datepicker-popup="dd-MM-yyyy"
-                     is-open="open_out_date" close-text="Close" class="form-control" id="performance_date" required />
+                     is-open="open_out_date" close-text="Close" class="form-control" id="performance_date" name="performance_date" required />
+                <span ng-show="RequestForm.performance_date.$error.required && RequestForm.performance_date.$dirty" class="text-danger">Введите дату</span>
             </div>
 
             <div ng-if="request.id" class="form-group col-md-2 col-md-offset-10">
@@ -78,7 +82,7 @@
 
             <div class="col-md-5 row">
                 <input ng-click="redirect('requestTable')" class="btn btn-sm btn-primary active col-md-5" value="Назад" />
-                <input ng-click="saveRequest(request, RequestForm)" class="btn btn-sm btn-success active col-md-5 col-md-offset-2" type="submit" value="Сохранить"  />
+                <input ng-click="saveRequest(request, RequestForm)" class="btn btn-sm btn-success active col-md-5 col-md-offset-2" type="submit" value="Сохранить" ng-disabled="RequestForm.$invalid"  />
             </div>
         </form>
     </div>

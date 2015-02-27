@@ -1,4 +1,4 @@
-# -*- coding : utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import random
 
@@ -15,6 +15,7 @@ class Urls(object):
     performers = '/api/performers/'
     performer_list = '/api/performer_list/'
     request_list = '/api/request_list'
+    check = '/api/check/'
 
 
 def r():
@@ -243,3 +244,87 @@ class RequestFilterOrderingTestCase(APITestCase):
             self.assertEqual(len(query), len(response.data['results']))
             for rec in response.data['results']:
                 self.assertIn(rec['id'], query)
+
+
+class CheckAPITestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+        self.username = 'user'
+        self.password = 'secret'
+        self.user = User.objects.create_user(self.username, 'mail@example.com',
+                                             self.password)
+        self.client.force_authenticate(user=self.user)
+
+        Performers.objects.create(name='Alex')
+        Performers.objects.create(name='Mark')
+
+        for i in range(5):
+            Requests.objects.create(
+                in_number=str(i) * 5,
+                out_number=str(i+1) * 5,
+                text='some text',
+                filling_date='201%s-0%s-0%s' % (r(), r(), r()),
+                performance_date='201%s-0%s-0%s' % (r(), r(), r()),
+                # filling_date='201'+r()+'-0'+r()+'-0'+r(),
+                # performance_date='201'+r()+'-0'+r()+'-0'+r(),
+                applicant='Applicant-%s' % r(),
+                performer=Performers.objects.get(id=i % 2 + 1)
+            )
+
+    def test_check_exist(self):
+        data = {
+            'model': 'requests',
+            'field': 'in_number',
+            'value': '11111'
+        }
+        response = self.client.post(Urls.check, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['result'])
+        data = {
+            'model': 'performers',
+            'field': 'name',
+            'value': 'Alex'
+        }
+        response = self.client.post(Urls.check, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['result'])
+
+
+    def test_check_not_exist_in_number(self):
+        data = {
+            'model': 'requests',
+            'field': 'in_number',
+            'value': '99999'
+        }
+        response = self.client.post(Urls.check, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data['result'])
+        data = {
+            'model': 'performers',
+            'field': 'name',
+            'value': 'Bond'
+        }
+        response = self.client.post(Urls.check, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data['result'])
+
+    def test_check_bad_requests(self):
+        data = {
+            'model': 'requests',
+            'field': 'text',
+        }
+        response = self.client.post(Urls.check, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data['field'] = 'badField'
+        response = self.client.post(Urls.check, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data['model'] = 'badModel'
+        data['field'] = 'in_number'
+        response = self.client.post(Urls.check, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data['model'] = 'requests'
+        data['field'] = 'text'
+        data['value'] = 'some text'  # есть в каждой записи
+        response = self.client.post(Urls.check, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
