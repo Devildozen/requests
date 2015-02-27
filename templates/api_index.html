@@ -1,61 +1,32 @@
+{% extends 'base.html' %}
 {% load staticfiles %}
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html ng-app="myApp">
-<head>
 
-
-{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">#}
-    <link rel="stylesheet" type="text/css" href="{% static "/static/css/bootstrap.css" %}">
-    <link rel="stylesheet" type="text/css" href="{% static "/static/css/index.css" %}">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-route.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-cookies.min.js"></script>
-
-    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.js"></script>
-{#    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>#}
-{#    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>#}
-{#    <script src="http://wisdomweb.ru/editor/localization.js"></script>#}
-
-    <script src="{% static '/static/js/ng-infinite-scroll.js' %}"></script>
-    <script src="{% static '/static/js/request-angular.js' %}"></script>
-
-
-    <!--link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script-->
-
-
-</head>
-<body ng-controller="BodyCtrl" class="container">
-    {% block header %}
-        <div class="navbar navbar-inverse container-fluid" >
-            <div class="navbar-inner">
-                <ul class="nav navbar-nav">
-                    <li ng-click="virtualPage = 'requestTable'"><a href="">Заявки</a></li>
-                    <li ng-click="setRequestForm()"><a href="">Создать завку</a></li>
-                    <li><a ng-click="virtualPage = 'performerForm'" href="">Исполнители</a></li>
-                    <li class=""><a href="{% url 'logout' %}" >Выйти</a></li>
-                </ul>
+{% block body %}
+        {% block header %}
+            <div class="navbar navbar-inverse container-fluid" >
+                <div class="navbar-inner">
+                    <ul class="nav navbar-nav">
+                        <li ng-click="virtualPage = 'requestTable'"><a href="">Заявки</a></li>
+                        <li ng-click="setRequestForm()"><a href="">Создать завку</a></li>
+                        <li><a ng-click="virtualPage = 'performerForm'" href="">Исполнители</a></li>
+                        <li class=""><a href="{% url 'logout' %}" >Выйти</a></li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    {% endblock header %}
+        {% endblock header %}
 
-    {% block content %}
-        <div ng-switch on="virtualPage" class="container-fluid center-block">
-            <div ng-switch-when="requestTable">
-                {% include 'api_request_table.html' %}
+        {% block content %}
+            <div ng-switch on="virtualPage" class="container-fluid center-block">
+                <div ng-switch-when="requestTable">
+                    {% include 'api_request_table.html' %}
+                </div>
+                <div ng-switch-when="requestForm">
+                    {% include 'api_request_form.html' %}
+                </div>
+                <div ng-switch-when="performerForm">
+                    {% include 'api_performers.html' %}
+                </div>
             </div>
-            <div ng-switch-when="requestForm">
-                {% include 'api_request_form.html' %}
-            </div>
-            <div ng-switch-when="performerForm">
-                {% include 'api_performers.html' %}
-            </div>
-        </div>
-    {% endblock content %}
-</body>
-</html>
+        {% endblock content %}
+
+{% endblock body %}

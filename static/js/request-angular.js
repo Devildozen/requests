@@ -73,7 +73,7 @@ angular.module("myApp").directive('unique', ['$http', function($http) {
             scope.$watch(attrs.ngModel, function() {
                 var params = attrs.unique.split('.');
                 
-                alert(constructor.$modelValue)
+                //alert(constructor.$modelValue)
                 console.log(constructor.$modelValue)
                 var req = {
                     method: 'POST',
