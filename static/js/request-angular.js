@@ -70,7 +70,6 @@ angular.module("myApp").directive('unique', ['$http', function($http) {
             //var currentValue = constructor.$modelValue;
             //alert(constructor.$modelValue)
             //console.log(constructor);
-
             scope.$watch(attrs.ngModel, function() {
                 var params = attrs.unique.split('.');
                 //console.log('----------------------------------------');
@@ -83,8 +82,8 @@ angular.module("myApp").directive('unique', ['$http', function($http) {
                 //console.log(attrs);
                 //console.log(ele);
                 //console.log(constructor);
-                //alert(constructor.$modelValue)
-                //console.log(constructor.$modelValue)
+                alert(constructor.$modelValue)
+                console.log(constructor.$modelValue)
                 var req = {
                     method: 'POST',
                     url: '/api/check/',
@@ -105,6 +104,10 @@ angular.module("myApp").directive('unique', ['$http', function($http) {
                 });
             });
         }
+        //link: {
+        //    pre: function PreLinkingFunction($scope, $element, $attributes, constructor) { alert(constructor.$modelValue) },
+        //    post: function PostLinkingFunction($scope, $element, $attributes, constructor) { alert(constructor.$modelValue) }
+        //}
     }
 }]);
 
