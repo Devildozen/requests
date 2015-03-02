@@ -151,8 +151,8 @@ angular.module("myApp").directive('myTest',function(){
 
 //-------------------- Общий контроллер + навигация --------------------
 angular.module("myApp").controller('BodyCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls) {
-    $scope.virtualPage = pages.performers;
-    //$scope.virtualPage = pages.requestList;
+    //$scope.virtualPage = pages.performers;
+    $scope.virtualPage = pages.requestList;
 
     $scope.redirect = function(page){
         $scope.virtualPage = page;

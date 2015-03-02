@@ -36,6 +36,7 @@ from rest_framework.response import Response
 
 from rest_api.serializers import *
 from rest_api.forms import *
+from rest_api.models import Requests, Performers
 from django.contrib.auth import authenticate, login, logout
 
 # @api_view(['GET'])
@@ -48,6 +49,18 @@ ordering_regular = re.compile('^-?[a-zA-Zа-яА-ЯёЁ_]+$')
 
 
 class RequestsFilter(django_filters.FilterSet):
+    def get_status_filter(self, value):
+        statuses = {
+            'ready': self.filter(out_number__isnull=False),
+            'active': (self.filter(out_number__isnull=True).
+                       filter(performance_date__gte=datetime.date.today())),
+            'overdue': (self.filter(out_number__isnull=True).
+                        filter(performance_date__lte=datetime.date.today())),
+        }
+        if value in statuses:
+            return statuses[value]
+        return Requests.objects.none()
+
     performer = django_filters.CharFilter(name='performer__name')
     applicant = django_filters.CharFilter(name='applicant',
                                           lookup_type='icontains')
@@ -72,6 +85,9 @@ class RequestsFilter(django_filters.FilterSet):
     out_day = django_filters.CharFilter(name='performance_date',
                                         lookup_type='day')
 
+    status = django_filters.MethodFilter(action=get_status_filter)
+
+
     class Meta:
         model = Requests
         fields = [
@@ -88,6 +104,7 @@ class RequestsFilter(django_filters.FilterSet):
             'out_year',
             'out_month',
             'out_day',
+            'status',
         ]
         order_by = ('-id',)
         ordering_fields = (

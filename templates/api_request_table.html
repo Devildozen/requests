@@ -20,8 +20,10 @@
             </div>
             <div class="col-md-2">
                 <label for="fPerformer" class="glyphicon glyphicon-user">Исполнитель: </label>
-                <select ng-change="getRequests('filter')"  ng-init="getPerformerList()" ng-model="filters.performer" ng-options="performer.name as performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}
-                    <option value=" "><option>
+                <select ng-change="getRequests('filter')" ng-init="getPerformerList()" ng-model="filters.performer"
+                        ng-options="performer.name as performer.name for performer in performers"
+                        id="performer" class="form-control">{{ performer.name }}
+                    <option></option>
                 </select>
             </div>
             <div class="col-md-2" >
@@ -42,6 +44,17 @@
                 <label for="fText" class="glyphicon glyphicon-pencil"> Текст: </label>
                 <textarea ng-change="getRequests('filter')" ng-model="filters.text" class="col-md-12 form-control" id="fText"></textarea>
             </div>
+
+            <div class="col-md-2">
+                <label for="fStatus" class="glyphicon glyphicon-flag">Статус: </label>
+                <select ng-model="filters.status" ng-change="getRequests('filter')" id="fStatus" class="form-control">
+                    <option></option>
+                    <option value="ready">готовые</option>
+                    <option value="active">в работе</option>
+                    <option value="overdue" selected >просроченные</option>
+                </select>
+            </div>
+
             <!--button class="btn btn-default" ng-click="getRequests()"> Update </button-->
         </div>
 

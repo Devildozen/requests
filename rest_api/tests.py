@@ -175,7 +175,7 @@ class RequestFilterOrderingTestCase(APITestCase):
         for i in range(5):
             Requests.objects.create(
                 in_number=str(i) * 5,
-                out_number=str(i+1) * 5,
+                out_number= str(i+1) * 5,
                 text='some text',
                 filling_date='201%s-0%s-0%s' % (r(), r(), r()),
                 performance_date='201%s-0%s-0%s' % (r(), r(), r()),
@@ -248,6 +248,57 @@ class RequestFilterOrderingTestCase(APITestCase):
             self.assertEqual(len(query), len(response.data['results']))
             for rec in response.data['results']:
                 self.assertIn(rec['id'], query)
+
+    def test_status_filter(self):
+        ready_n = str(random.randint(100000, 900000))
+        active_n = str(random.randint(100000, 900000))
+        overdue_n = str(random.randint(100000, 900000))
+        # Готовая
+        Requests.objects.create(
+            in_number=ready_n,
+            out_number='147',
+            text='test',
+            filling_date='2015-02-04',
+            performance_date='2015-02-01',
+            applicant='вася',
+            performer=Performers.objects.get(id=1)
+        )
+        # В работе
+        Requests.objects.create(
+            in_number=active_n,
+            text='test',
+            filling_date='2015-02-04',
+            performance_date='2025-01-01',
+            applicant='вася',
+            performer=Performers.objects.get(id=1)
+        )
+        # Просроченная
+        Requests.objects.create(
+            in_number=overdue_n,
+            text='test',
+            filling_date='2015-02-04',
+            performance_date='1900-02-01',
+            applicant='вася',
+            performer=Performers.objects.get(id=1)
+        )
+        response = self.client.get('%s?status=ready' % Urls.request_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(ready_n, response.content)
+        self.assertNotIn(active_n, response.content)
+        self.assertNotIn(overdue_n, response.content)
+
+        response = self.client.get('%s?status=active' % Urls.request_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(active_n, response.content)
+        self.assertNotIn(ready_n, response.content)
+        self.assertNotIn(overdue_n, response.content)
+
+        response = self.client.get('%s?status=overdue' % Urls.request_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(overdue_n, response.content)
+        self.assertNotIn(ready_n, response.content)
+        self.assertNotIn(active_n, response.content)
+
 
 
 class CheckAPITestCase(APITestCase):
