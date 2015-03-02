@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 
 
 class Urls(object):
-    performers = '/api/performers/'
+    # performers = '/api/performers/'
     performer_list = '/api/performer_list/'
     request_list = '/api/request_list'
     check = '/api/check/'
@@ -32,7 +32,7 @@ class PermissionsCase(APITestCase):
                                              self.password)
 
     def test_not_authorized_user(self):
-        response = self.client.get(Urls.performers)
+        response = self.client.get(Urls.performer_list)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         response = self.client.get(Urls.request_list)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -55,13 +55,13 @@ class PerformersAPITestCase(APITestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_get_performer_list(self):
-        response = self.client.get(Urls.performers)
+        response = self.client.get(Urls.performer_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_performer(self):
-        response = self.client.post(Urls.performers, {'name': 'Alex'})
+        response = self.client.post(Urls.performer_list, {'name': 'Alex'})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.client.get(Urls.performers)
+        response = self.client.get(Urls.performer_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('Alex', response.content)
 

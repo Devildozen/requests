@@ -65,8 +65,10 @@
                 <select ng-init="getPerformerList()" ng-model="request.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
                 <select ng-model="request.performer" ng-options="performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
                 -->
+
                 <lable for="performer" class="glyphicon glyphicon-user">Исполнитель:</lable>
                 <select ng-model="request.performer" ng-options="performer.id as performer.name for performer in performers"  class="form-control" id="performer" >{{ performer.name }}</select>
+
             </div>
 
             <div class="form-group col-md-2 col-md-offset-8">

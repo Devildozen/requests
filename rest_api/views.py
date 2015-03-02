@@ -4,14 +4,14 @@
 # ? базу удалить из репы
 # + календарики на js
 # + срок исполнения заполнялся автоматом через 7 дней
-# ошибка валидации формы возле каждого поля
-
-# постраничная навигация
+# +-ошибка валидации формы возле каждого поля
 
 # Исполнители, список, и добавление
 # сделать исполнителя не активным
 # уникальное имя исполнителя
 # Сводная статистика по исполнителям
+
+# постраничная навигация
 
 # сортировка по статусу
 
@@ -73,7 +73,6 @@ class RequestsFilter(django_filters.FilterSet):
     out_day = django_filters.CharFilter(name='performance_date',
                                         lookup_type='day')
 
-
     class Meta:
         model = Requests
         fields = [
@@ -113,6 +112,13 @@ class RequestsFilter(django_filters.FilterSet):
         return super(RequestsFilter, self).get_order_by(order_value)
 
 
+@api_view(['GET', 'POST'])
+def index(request):
+    if request.user.is_authenticated():
+        return render(request, 'api_index.html')
+    return HttpResponseRedirect(reverse('login'))
+
+
 def my_login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(reverse('requests'))
@@ -141,13 +147,6 @@ def my_logout(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse('login'))
     logout(request)
-    return HttpResponseRedirect(reverse('login'))
-
-
-@api_view(['GET', 'POST'])
-def index(request):
-    if request.user.is_authenticated():
-        return render(request, 'api_index.html')
     return HttpResponseRedirect(reverse('login'))
 
 

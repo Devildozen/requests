@@ -71,28 +71,29 @@ angular.module("myApp").directive('unique', ['$http', function($http) {
             //alert(constructor.$modelValue)
             //console.log(constructor);
             scope.$watch(attrs.ngModel, function() {
-                var params = attrs.unique.split('.');
-                
-                //alert(constructor.$modelValue)
-                console.log(constructor.$modelValue)
-                var req = {
-                    method: 'POST',
-                    url: '/api/check/',
-                    data: {
-                        model: params[0],
-                        field: params[1],
-                        value: constructor.$modelValue
-                    }
-                };
-                //console.log(req);
-                $http(req)
-                .success(function(data, status, headers, cfg) {
-                    //console.log(data);
-                    //console.log(data.result);
-                    constructor.$setValidity('unique', !data.result);
-                })
-                .error(function(data, status, headers, cfg) {
-                });
+                if (constructor.$modelValue) {
+                    var params = attrs.unique.split('.');
+                    //alert(constructor.$modelValue)
+                    console.log(constructor.$modelValue)
+                    var req = {
+                        method: 'POST',
+                        url: '/api/check/',
+                        data: {
+                            model: params[0],
+                            field: params[1],
+                            value: constructor.$modelValue
+                        }
+                    };
+                    //console.log(req);
+                    $http(req)
+                    .success(function (data, status, headers, cfg) {
+                        //console.log(data);
+                        //console.log(data.result);
+                        constructor.$setValidity('unique', !data.result);
+                    })
+                    .error(function (data, status, headers, cfg) {
+                    });
+                }
             });
         }
         //link: {
@@ -231,7 +232,7 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
     $scope.getPerformerList = function(){
         $http.get(urls.api_performer_list)
             .success(function(data, status, headers, config) {
-                $scope.performers = data;
+                $scope.performers = data.results;
             })
             .error(function(data, status, headers, config ){
                 $scope.error = getErrorMessage(status, headers, config, data)
@@ -317,7 +318,7 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
     getPerformerList = function(){
         $http.get(urls.api_performer_list)
             .success(function(data, status, headers, config) {
-                $scope.performers = data;
+                $scope.performers = data.results;
             })
             .error(function(data, status, headers, config ){
                 $scope.error = getErrorMessage(data, status, headers, config);
