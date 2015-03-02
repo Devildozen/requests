@@ -1,5 +1,5 @@
 {% verbatim %}
-    <div ng-controller="RequestsCtrl" >
+    <div ng-controller="RequestsCtrl">
         <div class="row">
             <!--
             <input ng-init="f.out_number = f.in_number" type="hidden">
@@ -20,11 +20,19 @@
             </div>
             <div class="col-md-2">
                 <label for="fPerformer" class="glyphicon glyphicon-user">Исполнитель: </label>
+                <!--
                 <select ng-change="getRequests('filter')" ng-init="getPerformerList()" ng-model="filters.performer"
                         ng-options="performer.name as performer.name for performer in performers"
-                        id="performer" class="form-control">{{ performer.name }}
+                        id="performer" class="form-control">
                     <option></option>
                 </select>
+                -->
+                <select ng-change="getRequests('filter')" ng-init="getPerformerList()" ng-model="filters.performer"
+                        id="performer" class="form-control">
+                    <option value="null"></option>
+                    <option ng-repeat="performer in performers" ng-class="!performer.active ? 'text-muted' : '' " >{{ performer.name }}</option>
+                </select>
+
             </div>
             <div class="col-md-2" >
                 <label for="fInDate" class="glyphicon glyphicon-calendar">Дата подачи: </label>

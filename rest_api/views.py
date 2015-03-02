@@ -6,14 +6,14 @@
 # + срок исполнения заполнялся автоматом через 7 дней
 # +-ошибка валидации формы возле каждого поля
 
+# +сделать исполнителя не активным
 # Исполнители, список, и добавление
-# сделать исполнителя не активным
-# уникальное имя исполнителя
+# + уникальное имя исполнителя
 # Сводная статистика по исполнителям
 
 # постраничная навигация
 
-# сортировка по статусу
+# + сортировка по статусу
 
 # отлавливать неавторизованного юзера
 
@@ -86,7 +86,6 @@ class RequestsFilter(django_filters.FilterSet):
                                         lookup_type='day')
 
     status = django_filters.MethodFilter(action=get_status_filter)
-
 
     class Meta:
         model = Requests
@@ -178,7 +177,7 @@ def my_logout(request):
 #         if serializer.is_valid():
 #             serializer.save()
 #             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PerformerDetail(APIView):
@@ -306,8 +305,9 @@ class CheckExist(APIView):
 
 
 def show_db(request):
-    template_context = {}
-    template_context['Requests'] = Requests.objects.all()
-    template_context['Performers'] = Performers.objects.all()
+    template_context = {
+        'Requests': Requests.objects.all(),
+        'Performers': Performers.objects.all()
+    }
     # template_context['RequestHistory'] = RequestHistory.objects.all()
     return render(request, 'db.html',  template_context)

@@ -151,8 +151,9 @@ angular.module("myApp").directive('myTest',function(){
 
 //-------------------- Общий контроллер + навигация --------------------
 angular.module("myApp").controller('BodyCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls) {
-    //$scope.virtualPage = pages.performers;
     $scope.virtualPage = pages.requestList;
+    //$scope.virtualPage = pages.requestDetail;
+    //$scope.virtualPage = pages.performers;
 
     $scope.redirect = function(page){
         $scope.virtualPage = page;
@@ -233,6 +234,7 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
         $http.get(urls.api_performer_list)
             .success(function(data, status, headers, config) {
                 $scope.performers = data.results;
+                $scope.filters.performer=null;
             })
             .error(function(data, status, headers, config ){
                 $scope.error = getErrorMessage(status, headers, config, data)
@@ -318,7 +320,7 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
     getPerformerList = function(){
         $http.get(urls.api_performer_list)
             .success(function(data, status, headers, config) {
-                $scope.performers = data.results;
+                $scope.performers = deleteDisabledPerformers(data.results);
             })
             .error(function(data, status, headers, config ){
                 $scope.error = getErrorMessage(data, status, headers, config);
@@ -374,6 +376,15 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
         }
     };
 
+    function deleteDisabledPerformers(performers){
+        clearPerformers = [];
+        for (var i=0; i<performers.length; i++){
+            if (performers[i].active){
+                clearPerformers.push(performers[i])
+            }
+        }
+        return clearPerformers;
+    }
 
     function setDates(){
         //var today = new Date();
