@@ -185,7 +185,7 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
             //    $scope.filters.filling_date = getNormalDate($scope.filters.filling_date)
             //}
             for (var filter in $scope.filters){
-                if ($scope.filters[filter] == ''){
+                if ($scope.filters[filter] == '' || $scope.filters[filter] == 'null'){
                     $scope.filters[filter] = null;
                 }
             }

@@ -46,9 +46,10 @@
             </div>
 
             <div class="col-md-2">
+
                 <label for="fStatus" class="glyphicon glyphicon-flag">Статус: </label>
-                <select ng-model="filters.status" ng-change="getRequests('filter')" id="fStatus" class="form-control">
-                    <option></option>
+                <select ng-init="filters.status=null" ng-model="filters.status" ng-change="getRequests('filter')" id="fStatus" class="form-control">
+                    <option value="null"></option>
                     <option value="ready">готовые</option>
                     <option value="active">в работе</option>
                     <option value="overdue" selected >просроченные</option>
