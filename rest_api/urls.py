@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
-from django.contrib import admin
 
 import rest_api.views
 import rest_api.serializers

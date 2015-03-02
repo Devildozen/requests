@@ -17,7 +17,6 @@
 
 # отлавливать неавторизованного юзера
 
-
 import re
 
 from django.shortcuts import render
@@ -150,19 +149,19 @@ def my_logout(request):
     return HttpResponseRedirect(reverse('login'))
 
 
-@api_view(['GET', 'POST'])
-def performer_list(request):
-    if request.method == 'GET':
-        performers = Performers.objects.all()
-        serializer = PerformerSerializer(performers, many=True)
-        return Response(serializer.data)
-
-    if request.method == 'POST':
-        serializer = PerformerSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['GET', 'POST'])
+# def performer_list(request):
+#     if request.method == 'GET':
+#         performers = Performers.objects.all()
+#         serializer = PerformerSerializer(performers, many=True)
+#         return Response(serializer.data)
+#
+#     if request.method == 'POST':
+#         serializer = PerformerSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PerformerDetail(APIView):

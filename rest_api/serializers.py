@@ -21,6 +21,7 @@ class PerformerSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
+            'active',
             # 'requests',
         )
     # requests = serializers.StringRelatedField(many=True, read_only=True)

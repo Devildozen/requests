@@ -75,6 +75,10 @@ class PerformersAPITestCase(APITestCase):
         response = self.client.delete('%s1/' % Urls.performer_list)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    def test_add_exist_performer_name(self):
+        response = self.client.post(Urls.performer_list, {'name': 'Nick'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class RequestAPITestCase(APITestCase):
     def setUp(self):

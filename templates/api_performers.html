@@ -1,11 +1,26 @@
 {% verbatim %}
 <div ng-controller="PerformerCtrl">
+
+    <div ng-if="error" class="alert alert-danger">
+        {{ error }}
+    </div>
+
+    <ul>
+
+        <li ng-repeat="performer in performers">
+            <span ng-class="!performer.active ? 'text-muted' : '' " > {{ performer.name }} </span>
+            <input type="checkbox" ng-model="performer.active" ng-change="editPerformer(performer)">
+
+
+        </li>
+    </ul>
+
+
     <form class="form-group form-inline" name="PerformerForm">
-        <div class="form-group">
-            <lable for="newPerformerName">Имя : </lable>
-            <input ng-model="newPerformerName" class="form-control" id="newPerformerName" maxlength="100" type="text" placeholder="Ф.И.О" />
-        </div>
-        <input ng-click="save(newPerformerName, PerformerForm)" class="btn btn-sm btn-success active" type="submit" value="Сохранить"  />
+        <lable class="" for="newPerformerName">Имя:</lable>
+        <input ng-model="newPerformerName" class="form-control" id="newPerformerName" maxlength="100" type="text" name="newPerformerName" required unique="performers.name" placeholder="Ф.И.О" />
+        <span ng-show="PerformerForm.newPerformerName.$error.unique && PerformerForm.newPerformerName.$dirty && !PerformerForm.newPerformerName.$error.required"  class="text-danger col-md-12">Исполнитель с таким именем уже есть</span>
+        <input ng-click="save(newPerformerName, PerformerForm)" class="btn btn-sm btn-success" type="submit" value="Сохранить"  ng-disabled="PerformerForm.$invalid" />
     </form >
 </div>
 {% endverbatim %}

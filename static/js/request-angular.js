@@ -151,7 +151,7 @@ angular.module("myApp").directive('myTest',function(){
 
 //-------------------- Общий контроллер + навигация --------------------
 angular.module("myApp").controller('BodyCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls) {
-    $scope.virtualPage = pages.requestDetail;
+    $scope.virtualPage = pages.performers;
     //$scope.virtualPage = pages.requestList;
 
     $scope.redirect = function(page){
@@ -395,13 +395,39 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
 
 //-------------------- Контроллер исполнителей --------------------
 angular.module("myApp").controller('PerformerCtrl', function($scope, $http, getErrorMessage, urls){
+    // Получаем JSON с исполнителями
+    getPerformerList = function(){
+        $http.get(urls.api_performer_list)
+            .success(function(data, status, headers, config) {
+                $scope.performers = data.results;
+            })
+            .error(function(data, status, headers, config ){
+                $scope.error = getErrorMessage(data, status, headers, config);
+            });
+    };
+
     $scope.save = function(data, form){
         if (form.$valid){
             $http.post(urls.api_performer_list, {"name": data})
-                .success(function(data){})
+                .success(function(data){
+                    getPerformerList();
+                    $scope.newPerformerName = null;
+                })
                 .error(function(data, status, headers, config ){
                     $scope.error = getErrorMessage(data, status, headers, config);
                 });
         }
     };
+
+    $scope.editPerformer = function(performer){
+        $http.put(urls.api_performer_list + performer.id + '/', performer)
+            .success(function(data){
+                getPerformerList();
+            })
+            .error(function(data, status, headers, config ){
+                $scope.error = getErrorMessage(data, status, headers, config);
+            });
+    }
+
+    getPerformerList();
 });
