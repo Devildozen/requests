@@ -20,9 +20,6 @@
                     </ul>
                 </div>
             </div>
-            {% verbatim %}
-                {{ loc }}
-            {% endverbatim %}
         {% endblock header %}
 
 {#        {% block content %}#}
@@ -41,6 +38,7 @@
 
         {% block content %}
             <ng-view></ng-view>
+
             <script type="text/ng-template" id="RequestsTablePage">
                 {% include 'api_request_table.html' %}
             </script>

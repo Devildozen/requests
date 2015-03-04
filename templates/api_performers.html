@@ -8,16 +8,16 @@
     <table class="table-bordered table-responsive table-condensed">
         <tr>
             <th>Исполнитель</th>
-            <th>Закрытых</th>
-            <th>Текущих</th>
-            <th>Просроченых</th>
+            <th ng-click="gotoRequests({status:'ready'})">Закрытых</th>
+            <th ng-click="gotoRequests({status:'active'})">Текущих</th>
+            <th ng-click="gotoRequests({status:'overdue'})">Просроченых</th>
             <th>Статус</th>
         </tr>
         <tr ng-repeat="performer in performers">
-            <td ng-class="!performer.active ? 'text-muted' : '' " >{{ performer.name }}</td>
-            <td class="status_complete">{{ performer.completeCount }}</td>
-            <td class="status_active">{{ performer.activeCount }}</td>
-            <td class="status_overdue">{{ performer.overdueCount }}</td>
+            <td ng-click="gotoRequests({performer: performer.name})" ng-class="!performer.active ? 'text-muted' : '' " >{{ performer.name }}</td>
+            <td ng-click="gotoRequests({status:'ready', performer: performer.name })" class="status_complete">{{ performer.completeCount }}</td>
+            <td ng-click="gotoRequests({status:'active', performer: performer.name })" class="status_active">{{ performer.activeCount }}</td>
+            <td ng-click="gotoRequests({status:'overdue', performer: performer.name })" class="status_overdue">{{ performer.overdueCount }}</td>
             <td><input type="checkbox" ng-model="performer.active" ng-change="editPerformer(performer)"></td>
         </tr>
     </table>

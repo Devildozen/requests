@@ -27,21 +27,6 @@ angular.module("myApp").config(function($routeProvider){
             redirectTo: '/requests'
         })
 });
-        //$routeProvider.when('/requests',
-        //{
-        //    templateUrl:'views/question.html',
-        //    controller:'QuestionController'
-        //});
-        //$routeProvider.when('/requestForm',
-        //{
-        //    templateUrl:'views/answer.html',
-        //    controller:'AnswerController'
-        //});
-        //$routeProvider.when('/performers',
-        //{
-        //    templateUrl:'views/answer.html',
-        //    controller:'AnswerController'
-        //});
 
 // Храним id редактируемой заявки при переходе на страницу редактирования
 angular.module("myApp").factory('editedRequest', function(){
@@ -80,6 +65,12 @@ angular.module("myApp").factory('getErrorMessage', function(){
 });
 
 
+angular.module("myApp").factory('globalFilters', function() {
+    return {
+        filters: {}
+    }
+});
+
 function getNormalDate(date){
     try {
         var day = date.getDate();
@@ -94,6 +85,7 @@ function getNormalDate(date){
     //return angular.$filter('date')(date,'yyyy-MM-dd');
     //return date.substring(0, date.indexOf('T'))
 }
+
 
 angular.module("myApp").directive('unique', ['$http', function($http) {
     return {
@@ -206,8 +198,9 @@ angular.module("myApp").directive('myTest',function(){
     }
 });
 
-
-//-------------------- Общий контроллер + навигация --------------------
+//######################################################################
+//#################### Общий контроллер + навигация ####################
+//######################################################################
 angular.module("myApp").controller('BodyCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls) {
     //$scope.virtualPage = pages.requestList;
     //$scope.virtualPage = pages.requestDetail;
@@ -226,21 +219,27 @@ angular.module("myApp").controller('BodyCtrl', function ($scope, $http, editedRe
     $scope.testModelChange = function(param){
         alert($scope.testModel)
     };
-
-
 });
 
-
-//-------------------- Контроллер отображения таблицы заявок --------------------
-angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls, $location) {
+//###############################################################################
+//#################### Контроллер отображения таблицы заявок ####################
+//###############################################################################
+angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls, $location, globalFilters) {
+    $scope.filters = globalFilters.filters;
     readyGetNextPage = true;
     ordering = null;
     nextPage = null;
+
+    $scope.$on('$routeChangeStart', function(){
+        globalFilters.filters = {};
+    });
 
     // Формирование данных для GET запрос - фильтры, сортировка, страница
     var getParams = function(changed) {
         var params = {};
         if ($scope.filters) {
+            console.log($scope.filters);
+            console.log(nextPage);
             //if($scope.filters.filling_date){
             //    $scope.filters.filling_date = getNormalDate($scope.filters.filling_date)
             //}
@@ -320,6 +319,7 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
                 $scope.requests = $scope.requests.concat(data.results);
                 nextPage = data.next;
                 readyGetNextPage = true;
+                console.log(nextPage);
             })
             .error(function(data, status, headers, config ){
                 $scope.error = getErrorMessage(data, status, headers, config);
@@ -354,7 +354,7 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
             }
         }
     };
-    $scope.getRequests();
+    $scope.getRequests('filter');
 
     //$scope.showDatepicker = function(){
     //    $( "#fInDate" ).datepicker();
@@ -362,13 +362,15 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
 });
 
 
-//--------------------  Контроллер формы Создания/редактирования заявки --------------------
+//##########################################################################################
+//####################  Контроллер формы Создания/редактирования заявки ####################
+//##########################################################################################
 angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, editedRequest, pages, getErrorMessage, urls, $routeParams){
     // Получаем id заявки для редактирования
     //var id = editedRequest.id;
     //editedRequest.id = null;
 
-    var id = $routeParams["id"]
+    var id = $routeParams.id;
     // При переходе с редактируемой на создаваемую, очищаем форму
     //$scope.$on('clearForm', function(){
     //    $scope.request = null;
@@ -460,9 +462,11 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
     }
 });
 
-
-//-------------------- Контроллер исполнителей --------------------
-angular.module("myApp").controller('PerformerCtrl', function($scope, $http, getErrorMessage, urls){
+//#################################################################
+//#################### Контроллер исполнителей ####################
+//#################################################################
+angular.module("myApp").controller('PerformerCtrl', function($scope, $http, getErrorMessage, urls, globalFilters, $location){
+    //$scope.globalFilters = globalFilters;
     // Получаем JSON с исполнителями
     getPerformerList = function(){
         $http.get(urls.api_detail_performer_list)
@@ -522,6 +526,12 @@ angular.module("myApp").controller('PerformerCtrl', function($scope, $http, getE
             }
         }
     }
+
+    $scope.gotoRequests = function(filter){
+        //$scope.error = filter;
+        globalFilters.filters = filter;
+        $location.path("/requests");
+    };
 
     getPerformerList();
 });

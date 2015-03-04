@@ -3,6 +3,7 @@
         <div ng-if="error" class="alert alert-danger">
             {{ error }}
         </div>
+
         <div class="row">
             <!--
             <input ng-init="f.out_number = f.in_number" type="hidden">
@@ -29,6 +30,9 @@
                         id="performer" class="form-control">
                     <option></option>
                 </select>
+                -->
+                <!--
+                <select ng-change="getRequests('filter')" ng-model="filters.performer"
                 -->
                 <select ng-change="getRequests('filter')" ng-init="getPerformerList()" ng-model="filters.performer"
                         id="performer" class="form-control">
@@ -58,8 +62,11 @@
 
             <div class="col-md-2">
 
-                <label for="fStatus" class="glyphicon glyphicon-flag">Статус: </label>
+<!--
                 <select ng-init="filters.status=null" ng-model="filters.status" ng-change="getRequests('filter')" id="fStatus" class="form-control">
+-->
+                <label for="fStatus" class="glyphicon glyphicon-flag">Статус: </label>
+                <select ng-model="filters.status" ng-change="getRequests('filter')" id="fStatus" class="form-control">
                     <option value="null"></option>
                     <option value="ready">готовые</option>
                     <option value="active">в работе</option>
