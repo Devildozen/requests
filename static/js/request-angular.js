@@ -109,31 +109,50 @@ angular.module("myApp").directive('unique', ['$http', function($http) {
             //var currentValue = constructor.$modelValue;
             //alert(constructor.$modelValue)
             //console.log(constructor);
+            //ele.on('$focus', function(){
+            //ele.bind('$focus', function(){
+            var initValue = null;
+            var focusFlag = false;
+            //ele.on('focus', function(){ //+
+            ele.bind('focus', function(){ //+
+                focusFlag = true;
+            });
             scope.$watch(attrs.ngModel, function() {
+
+
                 if (constructor.$modelValue) {
-                    var params = attrs.unique.split('.');
-                    //alert(constructor.$modelValue)
-                    console.log(constructor.$modelValue)
-                    var req = {
-                        method: 'POST',
-                        url: '/api/check/',
-                        data: {
-                            model: params[0],
-                            field: params[1],
-                            value: constructor.$modelValue
-                        }
-                    };
-                    //console.log(req);
-                    $http(req)
-                    .success(function (data, status, headers, cfg) {
-                        //console.log(data);
-                        //console.log(data.result);
-                        constructor.$setValidity('unique', !data.result);
-                    })
-                    .error(function (data, status, headers, cfg) {
-                    });
+                    if (!focusFlag){
+                        initValue = constructor.$modelValue
+                    }
+                    if (initValue != constructor.$modelValue){
+                        var params = attrs.unique.split('.');
+                        //alert(constructor.$modelValue)
+                        console.log(constructor.$modelValue)
+                        var req = {
+                            method: 'POST',
+                            url: '/api/check/',
+                            data: {
+                                model: params[0],
+                                field: params[1],
+                                value: constructor.$modelValue
+                            }
+                        };
+                        //console.log(req);
+                        $http(req)
+                        .success(function (data, status, headers, cfg) {
+                            //console.log(data);
+                            //console.log(data.result);
+                            constructor.$setValidity('unique', !data.result);
+                        })
+                        .error(function (data, status, headers, cfg) {
+                        });
+                    }
+                }
+                else{
+                    constructor.$setValidity('unique', true);
                 }
             });
+
         }
         //link: {
         //    pre: function PreLinkingFunction($scope, $element, $attributes, constructor) { alert(constructor.$modelValue) },

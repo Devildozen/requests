@@ -1,5 +1,8 @@
 {% verbatim %}
     <div ng-controller="RequestsCtrl">
+        <div ng-if="error" class="alert alert-danger">
+            {{ error }}
+        </div>
         <div class="row">
             <!--
             <input ng-init="f.out_number = f.in_number" type="hidden">
