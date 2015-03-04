@@ -68,6 +68,9 @@
         </div>
 
 
+{{ location.path() }}
+
+
         <table  infinite-scroll='loadMore()' infinite-scroll-distance='1' class="table table-bordered table-responsive table-condensed">
             <tr>
                 <!--
@@ -98,6 +101,9 @@
                 <th class="col-md-1 editTitle" >Редактировать</th>
 
             </tr>
+<!--
+            <tr ng-dblclick="requestEdit(request.id)" ng-repeat="request in requests" ng-class="rowClass(request)">
+-->
             <tr ng-dblclick="requestEdit(request.id)" ng-repeat="request in requests" ng-class="rowClass(request)">
                 <td class="col-md-1">{{ request.in_number }}</td>
                 <td class="col-md-1">{{ request.out_number}}</td>
@@ -112,9 +118,9 @@
                     <a ng-click="edit(request)" href="#/requests/form">Редактировать</a>
                     <a ng-click="edit(request)" href="#/requests/form/{{ request.in_number }}">Редактировать</a>
                     <a ng-click="requestEdit(request.id)" href="#/requests/form/{{ request.id }}">Редактировать</a>
-                    -->
                     <button ng-click="requestEdit(request.id)" class="btn btn-xs btn-default glyphicon glyphicon-edit"></button>
-                    <!--a href="{% url 'request_form' %}?type=edit&in_num={{ request.in_number }}">Редактировать</a-->
+                    -->
+                    <a href="#/requests/form/{{ request.id }}" class="btn btn-xs btn-default glyphicon glyphicon-edit"></a>
                 </td>
             </tr>
         </table>

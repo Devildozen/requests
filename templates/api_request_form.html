@@ -87,8 +87,8 @@
             </div>
 
             <div class="col-md-5 row">
-                <input ng-click="redirect('requestTable')" class="btn btn-sm btn-primary active col-md-5" value="Назад" />
-                <input ng-click="saveRequest(request, RequestForm)" class="btn btn-sm btn-success active col-md-5 col-md-offset-2" type="submit" value="Сохранить" ng-disabled="RequestForm.$invalid"  />
+                <a href="#/requests" class="btn btn-sm btn-primary active col-md-5">Заявки</a>
+                <a ng-click="saveRequest(request, RequestForm)" href="#/requests" class="btn btn-sm btn-success active col-md-5 col-md-offset-2" type="submit" ng-disabled="RequestForm.$invalid" >Сохранить</a>
             </div>
         </form>
     </div>

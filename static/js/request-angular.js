@@ -5,6 +5,44 @@ angular.module("myApp").run(['$http','$cookies', function($http, $cookies){
     $http.defaults.headers.put['X-CSRFToken'] = $cookies.csrftoken;
 }]);
 
+angular.module("myApp").config(function($routeProvider){
+    $routeProvider
+        .when('/requests', {
+            templateUrl: 'RequestsTablePage',
+            controller: 'RequestsCtrl'
+        })
+        .when('/requests/form', {
+            templateUrl: 'RequestPage',
+            controller: 'RequestFormCtrl'
+        })
+        .when('/requests/form/:id', {
+            templateUrl: 'RequestPage',
+            controller: 'RequestFormCtrl'
+        })
+        .when('/performers', {
+            templateUrl: 'PerformersPage',
+            controller: 'PerformerCtrl'
+        })
+        .otherwise({
+            redirectTo: '/requests'
+        })
+});
+        //$routeProvider.when('/requests',
+        //{
+        //    templateUrl:'views/question.html',
+        //    controller:'QuestionController'
+        //});
+        //$routeProvider.when('/requestForm',
+        //{
+        //    templateUrl:'views/answer.html',
+        //    controller:'AnswerController'
+        //});
+        //$routeProvider.when('/performers',
+        //{
+        //    templateUrl:'views/answer.html',
+        //    controller:'AnswerController'
+        //});
+
 // Храним id редактируемой заявки при переходе на страницу редактирования
 angular.module("myApp").factory('editedRequest', function(){
     return {
@@ -170,11 +208,12 @@ angular.module("myApp").controller('BodyCtrl', function ($scope, $http, editedRe
         alert($scope.testModel)
     };
 
+
 });
 
 
 //-------------------- Контроллер отображения таблицы заявок --------------------
-angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls) {
+angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls, $location) {
     readyGetNextPage = true;
     ordering = null;
     nextPage = null;
@@ -271,8 +310,10 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
     // Переходим к редактированию заявки.
     $scope.requestEdit = function(id){
         // Сохраняем id редактируемой заметки
-        editedRequest.id = id;
-        $scope.redirect(pages.requestDetail);
+        //editedRequest.id = id;
+        $location.path("/requests/form/" + id);
+        //$scope.location = $location;
+        //$scope.redirect(pages.requestDetail);
     };
 
     // Разукрашиваем строки таблицы.
@@ -303,19 +344,21 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
 
 
 //--------------------  Контроллер формы Создания/редактирования заявки --------------------
-angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, editedRequest, pages, getErrorMessage, urls){
+angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, editedRequest, pages, getErrorMessage, urls, $routeParams){
     // Получаем id заявки для редактирования
-    var id = editedRequest.id;
-    editedRequest.id = null;
+    //var id = editedRequest.id;
+    //editedRequest.id = null;
+
+    var id = $routeParams["id"]
     // При переходе с редактируемой на создаваемую, очищаем форму
-    $scope.$on('clearForm', function(){
-        $scope.request = null;
-        $scope.error = null;
-        $scope.selectedPerformer = null;
-
-        setDates();
-
-    });
+    //$scope.$on('clearForm', function(){
+    //    $scope.request = null;
+    //    $scope.error = null;
+    //    $scope.selectedPerformer = null;
+    //
+    //    setDates();
+    //
+    //});
 
     // Получаем JSON с исполнителями
     getPerformerList = function(){
@@ -366,7 +409,7 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
             req.data = data;
             $http(req)
                 .success(function(data, status, headers, config){
-                    $scope.redirect(pages.requestList);
+                    //$scope.redirect(pages.requestList);
                 })
                 .error(function(data, status, headers, config ){
                     $scope.error = getErrorMessage(data, status, headers, config);

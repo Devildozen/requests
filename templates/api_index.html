@@ -6,27 +6,53 @@
             <div class="navbar navbar-inverse container-fluid" >
                 <div class="navbar-inner">
                     <ul class="nav navbar-nav">
+                        <li class=""><a href="#/requests">Заявки</a></li>
+                        <li class=""><a href="#/requests/form">Создать завку</a></li>
+                        <li><a href="#/performers">Исполнители</a></li>
+                        <li class=""><a href="{% url 'logout' %}" >Выйти</a></li>
+                        <!--
                         <li ng-click="virtualPage = 'requestTable'"><a href="">Заявки</a></li>
                         <li ng-click="setRequestForm()"><a href="">Создать завку</a></li>
                         <li><a ng-click="virtualPage = 'performerForm'" href="">Исполнители</a></li>
                         <li class=""><a href="{% url 'logout' %}" >Выйти</a></li>
+                        -->
+
                     </ul>
                 </div>
             </div>
+            {% verbatim %}
+                {{ loc }}
+            {% endverbatim %}
         {% endblock header %}
 
+{#        {% block content %}#}
+{#            <div ng-switch on="virtualPage" class="container-fluid center-block">#}
+{#                <div ng-switch-when="requestTable">#}
+{#                    {% include 'api_request_table.html' %}#}
+{#                </div>#}
+{#                <div ng-switch-when="requestForm">#}
+{#                    {% include 'api_request_form.html' %}#}
+{#                </div>#}
+{#                <div ng-switch-when="performerForm">#}
+{#                    {% include 'api_performers.html' %}#}
+{#                </div>#}
+{#            </div>#}
+{#        {% endblock content %}#}
+
         {% block content %}
-            <div ng-switch on="virtualPage" class="container-fluid center-block">
-                <div ng-switch-when="requestTable">
-                    {% include 'api_request_table.html' %}
-                </div>
-                <div ng-switch-when="requestForm">
-                    {% include 'api_request_form.html' %}
-                </div>
-                <div ng-switch-when="performerForm">
-                    {% include 'api_performers.html' %}
-                </div>
-            </div>
+            <ng-view></ng-view>
+            <script type="text/ng-template" id="RequestsTablePage">
+                {% include 'api_request_table.html' %}
+            </script>
+
+            <script type="text/ng-template" id="RequestPage">
+                {% include 'api_request_form.html' %}
+            </script>
+
+            <script type="text/ng-template" id="PerformersPage">
+                {% include 'api_performers.html' %}
+            </script>
         {% endblock content %}
+
 
 {% endblock body %}
