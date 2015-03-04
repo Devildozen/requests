@@ -32,3 +32,11 @@ table {
 .ng-valid.ng-dirty{
   border-color: #88e26a;
 }
+
+.performersPage form{
+    margin-top: 20px;
+}
+
+.text-muted{
+    color: #aaa;
+}

@@ -1,22 +1,29 @@
 {% verbatim %}
-<div ng-controller="PerformerCtrl">
+<div ng-controller="PerformerCtrl" class="row performersPage">
 
     <div ng-if="error" class="alert alert-danger">
         {{ error }}
     </div>
 
-    <ul>
-
-        <li ng-repeat="performer in performers">
-            <span ng-class="!performer.active ? 'text-muted' : '' " > {{ performer.name }} </span>
-            <input type="checkbox" ng-model="performer.active" ng-change="editPerformer(performer)">
-
-
-        </li>
-    </ul>
-
+    <table class="table-bordered table-responsive table-condensed">
+        <tr>
+            <th>Исполнитель</th>
+            <th>Закрытых</th>
+            <th>Текущих</th>
+            <th>Просроченых</th>
+            <th>Статус</th>
+        </tr>
+        <tr ng-repeat="performer in performers">
+            <td ng-class="!performer.active ? 'text-muted' : '' " >{{ performer.name }}</td>
+            <td class="status_complete">{{ performer.completeCount }}</td>
+            <td class="status_active">{{ performer.activeCount }}</td>
+            <td class="status_overdue">{{ performer.overdueCount }}</td>
+            <td><input type="checkbox" ng-model="performer.active" ng-change="editPerformer(performer)"></td>
+        </tr>
+    </table>
 
     <form class="form-group form-inline" name="PerformerForm">
+        <div>Добавить исполнителя.</div>
         <lable class="" for="newPerformerName">Имя:</lable>
         <input ng-model="newPerformerName" class="form-control" id="newPerformerName" maxlength="100" type="text" name="newPerformerName" required unique="performers.name" placeholder="Ф.И.О" />
         <span ng-show="PerformerForm.newPerformerName.$error.unique && PerformerForm.newPerformerName.$dirty && !PerformerForm.newPerformerName.$error.required"  class="text-danger col-md-12">Исполнитель с таким именем уже есть</span>

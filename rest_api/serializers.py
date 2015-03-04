@@ -1,18 +1,9 @@
 # -*- coding:utf-8 -*-
 
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
+# from rest_framework.validators import UniqueTogetherValidator
 
-# from rest_api.serializers import *
 from rest_api.models import Performers, Requests
-
-
-class PerformerRequests(serializers.RelatedField):
-    def to_representation(self, value):
-        return ('http://127.0.0.1:8000/api/performer_list/%s/requests/' %
-                value.performer.name)
-        # return ('http://127.0.0.1:8000/api/performer_list/%s/request/%d/' %
-        #        (value.performer.name, value.in_number))
 
 
 class PerformerSerializer(serializers.ModelSerializer):
@@ -24,6 +15,45 @@ class PerformerSerializer(serializers.ModelSerializer):
             'active',
             # 'requests',
         )
+
+
+class RequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Requests
+
+
+class RequestGetSerializer(RequestSerializer):
+    performer = PerformerSerializer()
+
+
+class PerformerRequestsSerializer(serializers.ModelSerializer):
+    requests = RequestSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Performers
+        fields = (
+            'id',
+            'name',
+            'active',
+            'requests',
+        )
+
+
+# class RequestCheckSerializer(RequestSerializer):
+#     class Meta:
+#         fields = (
+#             'in_number',
+#             'out_number',
+#         )
+# class PerformerCheckSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Performers
+#         fields = (
+#             'name',
+#         )
+
+
+# class PerformerSerializer(serializers.ModelSerializer):
     # requests = serializers.StringRelatedField(many=True, read_only=True)
     # requests = serializers.HyperlinkedRelatedField(
     #     many=True,
@@ -45,21 +75,18 @@ class PerformerSerializer(serializers.ModelSerializer):
     # requests = RequestSerializer(many=True)
 
 
-class RequestSerializer(serializers.ModelSerializer):
+# class RequestSerializer(serializers.ModelSerializer):
     # def __init__(self, *args, **kwargs):
     #     super(RequestSerializer, self).__init__(*args, **kwargs)
-    #     self.fields['in_number'].error_messages['unique'] = u'My custom required msg'
+    #     self.fields['in_number'].error_messages['unique'] = u'My custom msg'
 
-    class Meta:
-        model = Requests
-
-        # validators = [
-        #     UniqueTogetherValidator(
-        #         queryset=Requests.objects.all(),
-        #         fields = ('in_number'),
-        #         message='wrong in number'
-        #     )
-        # ]
+    # validators = [
+    #     UniqueTogetherValidator(
+    #         queryset=Requests.objects.all(),
+    #         fields = ('in_number'),
+    #         message='wrong in number'
+    #     )
+    # ]
 
     # performer = serializers.PrimaryKeyRelatedField(
     # performer = serializers.StringRelatedField(
@@ -86,20 +113,3 @@ class RequestSerializer(serializers.ModelSerializer):
     # def get_validation_exclusions(self):
     #   exclusions = super(RequestSerializer, self).get_validation_exclusions()
     #   return exclusions + ['performer']
-
-
-class RequestGetSerializer(RequestSerializer):
-    performer = PerformerSerializer()
-
-# class RequestCheckSerializer(RequestSerializer):
-#     class Meta:
-#         fields = (
-#             'in_number',
-#             'out_number',
-#         )
-# class PerformerCheckSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Performers
-#         fields = (
-#             'name',
-#         )

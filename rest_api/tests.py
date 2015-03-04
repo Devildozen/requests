@@ -16,6 +16,7 @@ class Urls(object):
     performer_list = '/api/performer_list/'
     request_list = '/api/request_list'
     check = '/api/check/'
+    detail_performer_list = '/api/detail_performer_list/'
 
 
 def r():
@@ -51,19 +52,31 @@ class PerformersAPITestCase(APITestCase):
         self.password = 'secret'
         self.user = User.objects.create_user(self.username, 'mail@example.com',
                                              self.password)
-        Performers.objects.create(name='Nick')
         self.client.force_authenticate(user=self.user)
+        Performers.objects.create(name='Nick')
+        Performers.objects.create(name='Alex')
+        for i in range(5):
+            Requests.objects.create(
+                in_number=str(i) * 5,
+                out_number=str(i+1) * 5,
+                text='some text',
+                filling_date='2015-02-04',
+                performance_date='2015-02-04',
+                applicant='Applicant-' + str(i),
+                performer=Performers.objects.get(id=i % 2 + 1)
+            )
+
 
     def test_get_performer_list(self):
         response = self.client.get(Urls.performer_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_performer(self):
-        response = self.client.post(Urls.performer_list, {'name': 'Alex'})
+        response = self.client.post(Urls.performer_list, {'name': 'Mark'})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         response = self.client.get(Urls.performer_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('Alex', response.content)
+        self.assertIn('Mark', response.content)
 
     def test_edit_performer(self):
         response = self.client.put('%s1/' % Urls.performer_list,
@@ -78,6 +91,11 @@ class PerformersAPITestCase(APITestCase):
     def test_add_exist_performer_name(self):
         response = self.client.post(Urls.performer_list, {'name': 'Nick'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_performers_requests(self):
+        response = self.client.get(Urls.detail_performer_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('some text', response.content)
 
 
 class RequestAPITestCase(APITestCase):

@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 # проверка уникальности номера заявки для редактируемой.
-# сводная статистика по исполнителям
+# + сводная статистика по исполнителям
 # постраничная навигация
 # + базу удалить из репы
 
@@ -180,6 +180,23 @@ def my_logout(request):
 #        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class PerformersList(generics.ListCreateAPIView):
+    queryset = Performers.objects.all()
+    # model = Performers
+    serializer_class = PerformerSerializer
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+
+class DetailPerformersList(generics.ListAPIView):
+    queryset = Performers.objects.all()
+    serializer_class = PerformerRequestsSerializer
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+
 class PerformerDetail(APIView):
     def get_objects(self, id):
         try:
@@ -202,15 +219,6 @@ class PerformerDetail(APIView):
     def delete(self, request, id):
         self.get_objects(id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class PerformersList(generics.ListCreateAPIView):
-    queryset = Performers.objects.all()
-    # model = Performers
-    serializer_class = PerformerSerializer
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
 
 
 # class RequestsList(generics.ListAPIView):

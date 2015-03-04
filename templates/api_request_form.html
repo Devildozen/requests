@@ -37,7 +37,7 @@
                 <!--span ng-show="RequestForm.in_number.$error.pattern">{{ RequestForm.in_number.$error }}</span-->
                 <!--span ng-show="RequestForm.in_number.$error.invalid">Заполните это поле</span-->
                 <lable for="in_number" class="glyphicon" >№ входящий:</lable>
-                <input ng-model="request.in_number" class="form-control" id="in_number" ng-pattern="/^\d+$/" name="in_number" required unique="requests.in_number.{{ request.in_number }}" placeholder="Входящий номер заявки" />
+                <input ng-model="request.in_number" class="form-control" id="in_number" ng-pattern="/^\d+$/" name="in_number" required unique="requests.in_number" placeholder="Входящий номер заявки" />
                 <span ng-show="RequestForm.in_number.$error.required && RequestForm.in_number.$dirty" class="text-danger">Это обязательное поле</span>
                 <span ng-show="RequestForm.in_number.$error.pattern && RequestForm.in_number.$dirty" class="text-danger">Это числовое поле</span>
                 <span ng-show="RequestForm.in_number.$error.unique && RequestForm.in_number.$dirty" class="text-danger">Заявка с таким номером уже есть</span>
@@ -81,7 +81,9 @@
 
             <div ng-if="request.id" class="form-group col-md-2 col-md-offset-10">
                 <lable for="out_number" class="glyphicon">№ исходящий:</lable>
-                <input ng-model="request.out_number" class="form-control" id="out_number" ng-pattern="/^\d+$/" placeholder="Номер исходящий" />
+                <input ng-model="request.out_number" class="form-control" id="out_number" name="out_number" ng-pattern="/^\d+$/" unique="requests.out_number" placeholder="Номер исходящий" />
+                <span ng-show="RequestForm.out_number.$error.pattern && RequestForm.out_number.$dirty" class="text-danger">Это числовое поле</span>
+                <span ng-show="RequestForm.out_number.$error.unique && RequestForm.out_number.$dirty" class="text-danger">Заявка с таким номером уже есть</span>
             </div>
 
             <div class="col-md-5 row">

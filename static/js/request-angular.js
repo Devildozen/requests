@@ -16,7 +16,8 @@ angular.module("myApp").factory('urls', function(){
     return {
         api_request_list : '/api/request_list',
         //api_request_list : '{% url 'api_request_list' %}',
-        api_performer_list : '/api/performer_list/'
+        api_performer_list : '/api/performer_list/',
+        api_detail_performer_list : '/api/detail_performer_list/'
         //api_performer_list : '{% url 'api_performer_list' %}'
     }
 });
@@ -151,9 +152,9 @@ angular.module("myApp").directive('myTest',function(){
 
 //-------------------- Общий контроллер + навигация --------------------
 angular.module("myApp").controller('BodyCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls) {
-    $scope.virtualPage = pages.requestList;
+    //$scope.virtualPage = pages.requestList;
     //$scope.virtualPage = pages.requestDetail;
-    //$scope.virtualPage = pages.performers;
+    $scope.virtualPage = pages.performers;
 
     $scope.redirect = function(page){
         $scope.virtualPage = page;
@@ -387,12 +388,6 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
     }
 
     function setDates(){
-        //var today = new Date();
-        //var day = today.getDate();
-        //var month = today.getMonth() + 1;
-        //var year = today.getFullYear();
-        //var todayFormat =  year + '-' + (month > 10 ? '' : '0') + month + '-' + (day > 10 ? '' : '0') + day;
-        //$scope.request = { filling_date : todayFormat };
         var week = 604800000;
         if (!$scope.request){
             $scope.request = {}
@@ -408,9 +403,10 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
 angular.module("myApp").controller('PerformerCtrl', function($scope, $http, getErrorMessage, urls){
     // Получаем JSON с исполнителями
     getPerformerList = function(){
-        $http.get(urls.api_performer_list)
+        $http.get(urls.api_detail_performer_list)
             .success(function(data, status, headers, config) {
                 $scope.performers = data.results;
+                getSummaryInfo($scope.performers);
             })
             .error(function(data, status, headers, config ){
                 $scope.error = getErrorMessage(data, status, headers, config);
@@ -438,6 +434,31 @@ angular.module("myApp").controller('PerformerCtrl', function($scope, $http, getE
             .error(function(data, status, headers, config ){
                 $scope.error = getErrorMessage(data, status, headers, config);
             });
+    };
+
+    function getSummaryInfo(performers){
+        for (var i=0; i<performers.length; i++) {
+            var performer = performers[i];
+            performer.completeCount = 0;
+            performer.activeCount = 0;
+            performer.overdueCount = 0;
+            for (var j = 0; j < performer.requests.length; j++) {
+                var request = performer.requests[j];
+                if (request.out_number) {
+                    performer.completeCount++;
+                }
+                else {
+                    var curr_date = new Date().valueOf();
+                    var out_date = new Date(request.performance_date.replace(/(\d+)-(\d+)-(\d+)/, '$1/$2/$3')).valueOf();
+                    if (curr_date > out_date) {
+                        performer.overdueCount++;
+                    }
+                    else {
+                        performer.activeCount++;
+                    }
+                }
+            }
+        }
     }
 
     getPerformerList();
