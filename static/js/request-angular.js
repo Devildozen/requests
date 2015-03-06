@@ -229,6 +229,8 @@ angular.module("myApp").controller('BodyCtrl', function ($scope, $http, editedRe
 //#################### Контроллер отображения таблицы заявок ####################
 //###############################################################################
 angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, editedRequest, pages, getErrorMessage, urls, $location, globalFilters) {
+    //$scope.filters.performer = null;
+    //$scope.filters.status = null;
     $scope.filters = globalFilters.filters;
     readyGetNextPage = true;
     ordering = null;
@@ -542,7 +544,9 @@ angular.module("myApp").controller('PerformerCtrl', function($scope, $http, getE
 
     $scope.gotoRequests = function(filter){
         //$scope.error = filter;
-        globalFilters.filters = filter;
+        for (var f in filter) {
+            globalFilters.filters[f] = filter[f];
+        }
         $location.path("/requests");
     };
 

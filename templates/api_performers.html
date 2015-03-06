@@ -11,6 +11,7 @@
             <th ng-click="gotoRequests({status:'ready'})">Закрытых</th>
             <th ng-click="gotoRequests({status:'active'})">Текущих</th>
             <th ng-click="gotoRequests({status:'overdue'})">Просроченых</th>
+            <th ng-click="gotoRequests()">Всего</th>
             <th>Статус</th>
         </tr>
         <tr ng-repeat="performer in performers">
@@ -18,6 +19,7 @@
             <td ng-click="gotoRequests({status:'ready', performer: performer.name })" class="status_complete">{{ performer.completeCount }}</td>
             <td ng-click="gotoRequests({status:'active', performer: performer.name })" class="status_active">{{ performer.activeCount }}</td>
             <td ng-click="gotoRequests({status:'overdue', performer: performer.name })" class="status_overdue">{{ performer.overdueCount }}</td>
+            <td ng-click="gotoRequests({performer: performer.name })">{{ performer.completeCount + performer.activeCount + performer.overdueCount }}</td>
             <td><input type="checkbox" ng-model="performer.active" ng-change="editPerformer(performer)"></td>
         </tr>
     </table>
