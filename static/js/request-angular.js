@@ -67,7 +67,10 @@ angular.module("myApp").factory('getErrorMessage', function(){
 
 angular.module("myApp").factory('globalFilters', function() {
     return {
-        filters: {}
+        filters: {
+            status:null,
+            performer:null
+        }
     }
 });
 
@@ -119,7 +122,7 @@ angular.module("myApp").directive('unique', ['$http', function($http) {
                     if (initValue != constructor.$modelValue){
                         var params = attrs.unique.split('.');
                         //alert(constructor.$modelValue)
-                        console.log(constructor.$modelValue)
+                        //console.log(constructor.$modelValue)
                         var req = {
                             method: 'POST',
                             url: '/api/check/',
@@ -155,7 +158,8 @@ angular.module("myApp").directive('unique', ['$http', function($http) {
 
 //angular.module("myApp").directive('myNormalDate',function(){
 //    return function (scope, element, attrs) {
-//        element.on('$change', al);
+//        element.on('$change', function() {
+
         //element.on('click', al);
 
         //element.bind('$change', function(){
@@ -231,15 +235,21 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
     nextPage = null;
 
     $scope.$on('$routeChangeStart', function(){
-        globalFilters.filters = {};
+        globalFilters.filters = {
+            status:null,
+            performer:null
+        };
     });
 
     // Формирование данных для GET запрос - фильтры, сортировка, страница
     var getParams = function(changed) {
         var params = {};
         if ($scope.filters) {
-            console.log($scope.filters);
-            console.log(nextPage);
+
+            //console.log('Filters : ');
+            //console.log($scope.filters);
+            //console.log('nextPage in filters : ');
+            //console.log(nextPage);
             //if($scope.filters.filling_date){
             //    $scope.filters.filling_date = getNormalDate($scope.filters.filling_date)
             //}
@@ -278,6 +288,8 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
             params.nextPage = null;
             $scope.requests = [];
         }
+        console.log('params : ')
+        console.log(params)
         return params;
     };
 
@@ -292,7 +304,7 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
         $http.get(urls.api_performer_list)
             .success(function(data, status, headers, config) {
                 $scope.performers = data.results;
-                $scope.filters.performer=null;
+                //$scope.filters.performer=null;
             })
             .error(function(data, status, headers, config ){
                 $scope.error = getErrorMessage(status, headers, config, data)
@@ -319,6 +331,7 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
                 $scope.requests = $scope.requests.concat(data.results);
                 nextPage = data.next;
                 readyGetNextPage = true;
+                console.log('next Page : ');
                 console.log(nextPage);
             })
             .error(function(data, status, headers, config ){
@@ -355,7 +368,7 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
         }
     };
     $scope.getRequests('filter');
-
+    //$scope.getPerformerList();
     //$scope.showDatepicker = function(){
     //    $( "#fInDate" ).datepicker();
     //}
