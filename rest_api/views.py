@@ -53,9 +53,11 @@ class RequestsFilter(django_filters.FilterSet):
     def get_status_filter(self, value):
         statuses = {
             'ready': self.filter(Q(out_number__isnull=False) | Q(criminal_number__isnull=False)),
-            'active': (self.filter(out_number__isnull=True).
+            'active': (self.filter(Q(out_number__isnull=True) &
+                                   Q(criminal_number__isnull=True)).
                        filter(performance_date__gte=datetime.date.today())),
-            'overdue': (self.filter(out_number__isnull=True).
+            'overdue': (self.filter(Q(out_number__isnull=True) &
+                                    Q(criminal_number__isnull=True)).
                         filter(performance_date__lte=datetime.date.today())),
         }
         if value in statuses:

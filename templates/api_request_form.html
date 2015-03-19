@@ -88,7 +88,7 @@
                 </div>
 
                 <div class="col-md-6 out-num">
-                    <lable for="out_number" class="glyphicon">№ исходящий:</lable>
+                    <lable for="out_number" class="glyphicon"><br/>№ исходящий:</lable>
                     <input ng-model="request.out_number" class="form-control" id="out_number" name="out_number" ng-pattern="/^\d+$/" unique="requests.out_number" placeholder="Номер исходящий" />
                     <span ng-show="RequestForm.out_number.$error.pattern && RequestForm.out_number.$dirty" class="text-danger">Это числовое поле</span>
                     <span ng-show="RequestForm.out_number.$error.unique && RequestForm.out_number.$dirty" class="text-danger">Заявка с таким исходящим номером уже есть</span>
