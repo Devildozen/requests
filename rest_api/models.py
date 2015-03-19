@@ -24,6 +24,11 @@ class Requests(models.Model):
                                   null=True,
                                   blank=True,
                                   verbose_name='Исходящий номер')
+    criminal_number = models.CharField(max_length=20,
+                                       unique=True,
+                                       null=True,
+                                       blank=True,
+                                       verbose_name='Номер уголовного производства')
     text = models.TextField(null=True,
                             blank=True,
                             verbose_name='Текст')

@@ -67,7 +67,7 @@
                 -->
 
                 <lable for="performer" class="glyphicon glyphicon-user">Исполнитель:</lable>
-                <select ng-model="request.performer" ng-options="performer.id as performer.name for performer in performers"  class="form-control" id="performer" ></select>
+                <select ng-model="request.performer" ng-options="performer.id as performer.name for performer in performers"  class="form-control" id="performer" required ></select>
 
             </div>
 
@@ -79,11 +79,21 @@
                 <span ng-show="RequestForm.performance_date.$error.required && RequestForm.performance_date.$dirty" class="text-danger">Введите дату</span>
             </div>
 
-            <div ng-if="request.id" class="form-group col-md-2 col-md-offset-10">
-                <lable for="out_number" class="glyphicon">№ исходящий:</lable>
-                <input ng-model="request.out_number" class="form-control" id="out_number" name="out_number" ng-pattern="/^\d+$/" unique="requests.out_number" placeholder="Номер исходящий" />
-                <span ng-show="RequestForm.out_number.$error.pattern && RequestForm.out_number.$dirty" class="text-danger">Это числовое поле</span>
-                <span ng-show="RequestForm.out_number.$error.unique && RequestForm.out_number.$dirty" class="text-danger">Заявка с таким номером уже есть</span>
+            <div ng-if="request.id" class="form-group col-md-4 col-md-offset-8 row">
+                <div class="col-md-6">
+                    <lable for="criminal_number" class="glyphicon">№ крим. производства:</lable>
+                    <input ng-model="request.criminal_number" class="form-control" id="criminal_number" name="criminal_number" ng-pattern="/^\d+$/" unique="requests.criminal_number" placeholder="Номер исходящий" />
+                    <span ng-show="RequestForm.criminal_number.$error.pattern && RequestForm.criminal_number.$dirty" class="text-danger">Это числовое поле</span>
+                    <span ng-show="RequestForm.criminal_number.$error.unique && RequestForm.criminal_number.$dirty" class="text-danger">Криминальное производство с таким номером уже есть</span>
+                </div>
+
+                <div class="col-md-6 out-num">
+                    <lable for="out_number" class="glyphicon">№ исходящий:</lable>
+                    <input ng-model="request.out_number" class="form-control" id="out_number" name="out_number" ng-pattern="/^\d+$/" unique="requests.out_number" placeholder="Номер исходящий" />
+                    <span ng-show="RequestForm.out_number.$error.pattern && RequestForm.out_number.$dirty" class="text-danger">Это числовое поле</span>
+                    <span ng-show="RequestForm.out_number.$error.unique && RequestForm.out_number.$dirty" class="text-danger">Заявка с таким исходящим номером уже есть</span>
+                </div>
+
             </div>
 
             <div class="col-md-5 row">

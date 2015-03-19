@@ -333,8 +333,10 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
                 $scope.requests = $scope.requests.concat(data.results);
                 nextPage = data.next;
                 readyGetNextPage = true;
-                console.log('next Page : ');
-                console.log(nextPage);
+                //if (nextPage && document.scrollHeight == document.offsetHeight){
+                if (nextPage && document.documentElement.clientHeight >= document.body.scrollHeight){
+                     $scope.loadMore();
+                }
             })
             .error(function(data, status, headers, config ){
                 $scope.error = getErrorMessage(data, status, headers, config);
@@ -352,7 +354,7 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
 
     // Разукрашиваем строки таблицы.
     $scope.rowClass = function(request){
-        if(request.out_number){
+        if(request.out_number || request.criminal_number){
             //return 'bg-success';
             return 'status_complete';
         }
@@ -525,7 +527,7 @@ angular.module("myApp").controller('PerformerCtrl', function($scope, $http, getE
             performer.overdueCount = 0;
             for (var j = 0; j < performer.requests.length; j++) {
                 var request = performer.requests[j];
-                if (request.out_number) {
+                if (request.out_number || request.criminal_number) {
                     performer.completeCount++;
                 }
                 else {

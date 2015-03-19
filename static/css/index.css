@@ -40,3 +40,7 @@ table {
 .text-muted{
     color: #aaa;
 }
+
+.out-num{
+    padding-right: 0px;
+}

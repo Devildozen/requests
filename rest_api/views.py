@@ -19,10 +19,11 @@
 
 import re
 
+import django_filters
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-import django_filters
+from django.db.models import Q
 # from django.conf import settings
 
 
@@ -51,7 +52,7 @@ ordering_regular = re.compile('^-?[a-zA-Zа-яА-ЯёЁ_]+$')
 class RequestsFilter(django_filters.FilterSet):
     def get_status_filter(self, value):
         statuses = {
-            'ready': self.filter(out_number__isnull=False),
+            'ready': self.filter(Q(out_number__isnull=False) | Q(criminal_number__isnull=False)),
             'active': (self.filter(out_number__isnull=True).
                        filter(performance_date__gte=datetime.date.today())),
             'overdue': (self.filter(out_number__isnull=True).
@@ -68,6 +69,8 @@ class RequestsFilter(django_filters.FilterSet):
                                           lookup_type='icontains')
     out_number = django_filters.CharFilter(name='out_number',
                                            lookup_type='icontains')
+    criminal_number = django_filters.CharFilter(name='criminal_number',
+                                                lookup_type='icontains')
     text = django_filters.CharFilter(name='text',
                                      lookup_type='icontains')
 
@@ -92,6 +95,7 @@ class RequestsFilter(django_filters.FilterSet):
         fields = [
             'in_number',
             'out_number',
+            'criminal_number',
             'filling_date',
             'performance_date',
             'text',
@@ -110,6 +114,7 @@ class RequestsFilter(django_filters.FilterSet):
             'id',
             'in_number',
             'out_number',
+            'criminal_number',
             'filling_date',
             'performance_date',
             'text',

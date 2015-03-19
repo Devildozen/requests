@@ -13,6 +13,7 @@
                 <label for="fOutNum" class="glyphicon">Исходящий номер: </label>
                 <input ng-change="getRequests('filter')" ng-model="filters.out_number" id="fOutNum" class="form-control">
             </div>
+
             <div class="col-md-2">
                 <label for="fApplicant" class="glyphicon glyphicon-user">Заявитель:</label>
                 <input ng-change="getRequests('filter')" ng-model="filters.applicant" id="fApplicant" class="form-control">
@@ -47,15 +48,24 @@
                 <input type="text" ng-model="filters.filling_date"  ng-click="open_in_date=true" ng-change="getRequests('filter')"
                     datepicker-popup="dd-MM-yyyy" is-open="open_in_date" close-text="Close" id="fInDate" class="form-control" />
             </div>
+
             <div class="col-md-2">
                 <label for="fOutDate" class="glyphicon glyphicon-calendar">Cрок исполнения: </label>
                 <input type="text" ng-model="filters.performance_date"  ng-click="open_out_date=true" ng-change="getRequests('filter')"
                     datepicker-popup="dd-MM-yyyy" is-open="open_out_date" close-text="Close"  class="form-control" id="fOutDate"/>
             </div>
+
             <div class="col-md-4">
                 <label for="fText" class="glyphicon glyphicon-pencil"> Текст: </label>
                 <textarea ng-change="getRequests('filter')" ng-model="filters.text" class="col-md-12 form-control" id="fText"></textarea>
             </div>
+
+            <div class="col-md-2">
+                <label for="fCrimeNum" class="glyphicon">№ крим. производства:</label>
+                <input ng-change="getRequests('filter')" ng-model="filters.criminal_number" id="fCrimeNum" class="form-control">
+            </div>
+
+
 
             <div class="col-md-2">
                 <label for="fStatus" class="glyphicon glyphicon-flag">Статус: </label>
@@ -91,6 +101,7 @@
                 <th class="col-md-1">№</th>
                 <th class="col-md-1" ng-click="orderBy('in_number')">Номер входящей</th>
                 <th class="col-md-1" ng-click="orderBy('out_number')">Номер исходящей</th>
+                <th class="col-md-1" ng-click="orderBy('criminal_number')">Номер криминального производства</th>
                 <th class="col-md-3" ng-click="orderBy('text')">Текст</th>
                 <th class="col-md-1" ng-click="orderBy('filling_date')">Дата подачи </th>
                 <th class="col-md-1" ng-click="orderBy('performance_date')">Срок исполнения</th>
@@ -106,6 +117,7 @@
                 <td class="col-md-1">{{ $index+1 }}</td>
                 <td class="col-md-1">{{ request.in_number }}</td>
                 <td class="col-md-1">{{ request.out_number}}</td>
+                <td class="col-md-1">{{ request.criminal_number}}</td>
                 <td class="col-md-3">{{ request.text }}</td>
                 <td class="col-md-1">{{ request.filling_date|date:"dd-MM-yyyy" }}</td>
                 <td class="col-md-1">{{ request.performance_date|date:"dd-MM-yyyy" }}</td>
