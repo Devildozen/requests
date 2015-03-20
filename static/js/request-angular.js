@@ -58,7 +58,7 @@ angular.module("myApp").factory('pages', function(){
 angular.module("myApp").factory('getErrorMessage', function(){
     return function(data, status, headers, config){
         if (status == 403){
-            return data.detail
+            return data.detail;
         }
         return data;
     }
@@ -287,11 +287,11 @@ angular.module("myApp").controller('RequestsCtrl', function ($scope, $http, edit
             }
         }
         else{
-            params.nextPage = null;
+            params.page = null;
             $scope.requests = [];
         }
-        console.log('params : ')
-        console.log(params)
+        //console.log('params : ')
+        //console.log(params)
         return params;
     };
 
@@ -442,6 +442,9 @@ angular.module("myApp").controller('RequestFormCtrl', function($scope, $http, ed
             data.performance_date = getNormalDate(data.performance_date);
             if (data.out_number == ''){
                 data.out_number = null;
+            }
+            if (data.criminal_number == ''){
+                data.criminal_number = null;
             }
             //data.performer = $scope.selectedPerformer.id
             req.data = data;

@@ -15,11 +15,11 @@
             <th>Статус</th>
         </tr>
         <tr ng-repeat="performer in performers">
-            <td ng-click="gotoRequests({performer: performer.name})" ng-class="!performer.active ? 'text-muted' : '' " >{{ performer.name }}</td>
-            <td ng-click="gotoRequests({status:'ready', performer: performer.name })" class="status_complete">{{ performer.completeCount }}</td>
-            <td ng-click="gotoRequests({status:'active', performer: performer.name })" class="status_active">{{ performer.activeCount }}</td>
-            <td ng-click="gotoRequests({status:'overdue', performer: performer.name })" class="status_overdue">{{ performer.overdueCount }}</td>
-            <td ng-click="gotoRequests({performer: performer.name })">{{ performer.completeCount + performer.activeCount + performer.overdueCount }}</td>
+            <td ng-click="gotoRequests({performer: performer.name})" ng-class="!performer.active ? 'text-muted' : '' "  class="cursor">{{ performer.name }}</td>
+            <td ng-click="gotoRequests({status:'ready', performer: performer.name })" class="status_complete cursor">{{ performer.completeCount }}</td>
+            <td ng-click="gotoRequests({status:'active', performer: performer.name })" class="status_active cursor">{{ performer.activeCount }}</td>
+            <td ng-click="gotoRequests({status:'overdue', performer: performer.name })" class="status_overdue cursor">{{ performer.overdueCount }}</td>
+            <td ng-click="gotoRequests({performer: performer.name })" class="cursor">{{ performer.completeCount + performer.activeCount + performer.overdueCount }}</td>
             <td><input type="checkbox" ng-model="performer.active" ng-change="editPerformer(performer)"></td>
         </tr>
     </table>

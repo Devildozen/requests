@@ -44,3 +44,7 @@ table {
 .out-num{
     padding-right: 0px;
 }
+
+.cursor{
+    cursor: pointer;
+}
